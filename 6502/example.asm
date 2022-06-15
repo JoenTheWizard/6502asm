@@ -11,3 +11,8 @@ LABEL:
     LDA $0001
     ADC $0003
     STA $0007
+
+    LDX #$6a
+    INX
+    INX
+    STX $0008
