@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     };
 
     if (argc < 2) {
-        printf("Error! Usage: ./6502asm prog.asm\n");
+        printf("Error! Usage: ./6502asm --build prog.asm\n");
         return -1;
     }
     else {
