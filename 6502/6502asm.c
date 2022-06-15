@@ -168,7 +168,7 @@ int main(int argc, char** argv) {
                                     monitorMem[val]++;
                                 }
                             }
-                            //Incrementing Registe values 
+                            //Incrementing Register values 
                             else if (strcmp(remove_spaces(op),"INX")) {
                                 regs.X++;
                             }
