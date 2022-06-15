@@ -53,6 +53,9 @@ void PrintFile(const char* fileName, int isHex);
 void LoadRegister(char* operation, uint8_t* regVal, uint8_t* mems);
 void PrintMemory(uint8_t* mems);
 
+//String manipulation
+char* remove_spaces(char* s);
+
 //Monitor memory management
 uint8_t* monitorMem;
 
@@ -76,7 +79,7 @@ int main(int argc, char** argv) {
         if (argc == 2 && strcmp(argv[1],"regs")==0)
             ReadRegs(regs);
         if (strcmp(argv[1],"--test")==0) {
-            //This is just for debugging, nothing here
+            //Debug argument, nothing here
         }
         else if (argc >= 3) {
             if (strcmp(argv[1],"--read") == 0) {
@@ -165,6 +168,13 @@ int main(int argc, char** argv) {
                                     monitorMem[val]++;
                                 }
                             }
+                            //Incrementing Registe values 
+                            else if (strcmp(remove_spaces(op),"INX")) {
+                                regs.X++;
+                            }
+                            else if (strcmp(remove_spaces(op),"INY")) {
+                                regs.Y++;
+                            }
                             else if (strcmp(op,"DEC")==0){
                                 //Decrementing at a memory address
                                 op = strtok(NULL, " ");
@@ -176,13 +186,7 @@ int main(int argc, char** argv) {
                                 }
                             }
                             else {
-                                //Labels Example of a label
-
-                                //LDX #$03
-                                //LABEL:
-                                //LDX #$03
-                                //INX
-                                //JMP LABEL
+                                //Labels
                                 op = strtok(op, ":");
                                 printf("%s\n",op);
                             }
@@ -267,4 +271,14 @@ void PrintMemory(uint8_t* mems)
             printf("%02x ",mems[i]);
     }
     printf("%c",'\n');
+}
+
+char* remove_spaces(char* s) {
+    char* d = s;
+    do {
+        while (*d == ' ') {
+            ++d;
+        }
+    } while (*s++ = *d++);
+    return s;
 }
