@@ -62,6 +62,7 @@ uint8_t* monitorMem;
 int main(int argc, char** argv) {
     //Initialize registers
     //Map memory address of 0x0200 to 0x05ff for pixel display
+    //The stack would occupy addresses from 0x0100 to 0x01ff
     REGISTER regs = {
         .A = 0x00,
         .X = 0x00,
@@ -79,7 +80,16 @@ int main(int argc, char** argv) {
         if (argc == 2 && strcmp(argv[1],"regs")==0)
             ReadRegs(regs);
         if (strcmp(argv[1],"--test")==0) {
-            //Debug argument, nothing here
+            //For monitor memory management in the 6502
+                // char *string1;
+                // string1 = malloc(sizeof(char)*256);
+                // strcpy(string1, "hello");
+                // string1[1] = '4';
+                // string1[10] = 'k';
+                // for (int i = 0; i < 0xff; i++)
+                //     printf("%02x ",string1[i]);
+
+                // free(string1);
         }
         else if (argc >= 3) {
             if (strcmp(argv[1],"--read") == 0) {
@@ -169,10 +179,10 @@ int main(int argc, char** argv) {
                                 }
                             }
                             //Incrementing Register values 
-                            else if (strcmp(remove_spaces(op),"INX")) {
+                            else if (strcmp(strtok(op,"\n"),"INX")==0) {
                                 regs.X++;
                             }
-                            else if (strcmp(remove_spaces(op),"INY")) {
+                            else if (strcmp(strtok(op,"\n"),"INY")==0) {
                                 regs.Y++;
                             }
                             else if (strcmp(op,"DEC")==0){
@@ -260,6 +270,7 @@ void LoadRegister(char* operation, uint8_t* regVal, uint8_t* mems) {
     }
 }
 
+//This will just print the zero page memory at the moment (0-255 bytes)
 void PrintMemory(uint8_t* mems)
 {
     uint16_t adr = 0x0000;
@@ -273,6 +284,7 @@ void PrintMemory(uint8_t* mems)
     printf("%c",'\n');
 }
 
+//Just to fix one word opcodes
 char* remove_spaces(char* s) {
     char* d = s;
     do {
