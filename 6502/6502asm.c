@@ -1,63 +1,44 @@
-//Im just going to try and write a simple 6502 assembly interpreter. Might implement graphics output too possibly (graphics.h, SDL, GTK are options).
-//This is very unfinished but I am planning to add more later
-//So far there are only a couple of opcodes and instruction implemented such as storing in a register, storing in memory and incrementing and decrementing
-//To use the program, you would need a simple file:
-//./6502asm --build <6502assembly>
-//This will only output the zero page memory and register values at the moment
-
-//Example 6502 assembly:
-//LDA #$02
-//STA $0000
-
-//LDA #$05
-//STA $0001
-
-//ADC $0000
-//STA $0003
-
-//LDA $0001
-//ADC $0003
-//STA $0008
-
+//Im just going to try and write a simple 6502 assembly interpreter. Might implement
+//graphics output too possibly (graphics.h, SDL, GTK are options).
+//Simple hello world in 6502 asm: https://youtu.be/9hLGvLvTs1w
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include "includes/register.h"
 
 //Unix-based console clear only (uses ANSI escape code)
 #define CNSCLR() printf("\033[H\033[J")
-
-//Registers
-typedef struct{
-    uint8_t A; //accum reg
-    uint8_t X; //X reg
-    uint8_t Y; //Y reg
-    uint8_t StackPt; //Stack pointer reg
-    uint16_t PC; //Program counter reg
-    uint8_t Status; //Status reg (this will be modified by the flags)
-} REGISTER;
-//These flags will be used to set certain modes for the 6502
-enum FLAGS {
-    C = (1 << 0), //Carry bit
-    Z = (1 << 1), //Zero
-    I = (1 << 2), //Disable Interrupts
-    D = (1 << 3), //Decimal mode
-    B = (1 << 4), //Break
-    U = (1 << 5), //Unused
-    V = (1 << 6), //Overflow
-    N = (1 << 7), //Negative
-};
 
 void ReadRegs(REGISTER reg);
 void PrintFile(const char* fileName, int isHex);
 void LoadRegister(char* operation, uint8_t* regVal, uint8_t* mems);
 void PrintMemory(uint8_t* mems);
 
+//For the JMP instruction
+void INTERP(char* fl, char* instruction, REGISTER regs, int jmpLine);
+
 //String manipulation
 char* remove_spaces(char* s);
 
 //Monitor memory management
 uint8_t* monitorMem;
+
+//Assembly hexdump
+char* assembly[4096];
+
+//Get the line index from file
+int LineIndex = 0;
+
+//Labels list
+#define LBL_LENGTH 64
+typedef struct {
+    char* name;
+    int lineNumber;
+    int size;
+} LABELS;
+LABELS* lblList;
+void FreeLBLBuffers(LABELS* LBL_LIST, int length);
 
 int main(int argc, char** argv) {
     //Initialize registers
@@ -68,7 +49,7 @@ int main(int argc, char** argv) {
         .X = 0x00,
         .Y = 0x00,
         .StackPt = 0xFF, //Point to top of stack (255)
-        .PC = 0x0600, //Point to mem adr of 0x0600 for assembly
+        .PC = 0x0000, //Point to mem adr of 0x0600 for assembly
         .Status = 0x00
     };
 
@@ -97,15 +78,19 @@ int main(int argc, char** argv) {
             }
             if (strcmp(argv[1],"--build") == 0){
                 FILE* fbuild;
-                char* instruction = NULL;
+                char* instruction = malloc(1024*sizeof(char));
                 size_t* size;
                 //Once we try and build, init the monitor memory
                 monitorMem = (uint8_t*)malloc(sizeof(uint8_t)*256);
+                //Allocate for labels
+                lblList = (LABELS*)malloc(sizeof(LABELS)*LBL_LENGTH);
+                lblList->size = 0;
 
                 if (fbuild = fopen(*(argv+2),"r"))
                 {
                     while(getline(&instruction,size,fbuild) != -1)
                     {
+                        LineIndex++;
                         if (*instruction != '\n') 
                         {
                             char* op = strtok(instruction, " ");
@@ -113,16 +98,28 @@ int main(int argc, char** argv) {
                                 //Load Accumulator register
                                 LoadRegister(op, &regs.A,monitorMem);
                                 ReadRegs(regs);
+
+                                //ASSEMBLY ABSOLUTE
+                                assembly[regs.PC] = "LDA";
+                                regs.PC++;
                             }
                             else if (strcmp(op, "LDX")==0) {
                                 //Load X register
                                 LoadRegister(op, &regs.X,monitorMem);
                                 ReadRegs(regs);
+
+                                //ASSEMBLY ABSOLUTE
+                                assembly[regs.PC] = "LDX";
+                                regs.PC++;
                             } 
                             else if (strcmp(op, "LDY")==0) {
                                 //Load Y register
                                 LoadRegister(op, &regs.Y,monitorMem);
                                 ReadRegs(regs);
+
+                                //ASSEMBLY ABSOLUTE
+                                assembly[regs.PC] = "LDY";
+                                regs.PC++;
                             }
                             else if (strcmp(op, "STA")==0)
                             {
@@ -195,14 +192,27 @@ int main(int argc, char** argv) {
                                     monitorMem[val]--;
                                 }
                             }
+                            else if (strcmp(op,"JMP")==0) {
+                                INTERP(argv[2],instruction,regs,2);
+                            }
                             else {
                                 //Labels
                                 op = strtok(op, ":");
-                                printf("%s\n",op);
+
+                                //Add the labels to the list then increment index
+                                lblList[lblList->size].lineNumber = LineIndex;
+                                lblList[lblList->size].name = (char*)malloc(sizeof(char)*strlen(op)+1);
+                                strncpy(lblList[lblList->size].name,op,strlen(op));
+
+                                printf("%s: %i\n", lblList[lblList->size].name, lblList[lblList->size].lineNumber);
+
+                                lblList->size++;
+                                //printf("%i\n",lblList->size);
                             }
                         }
                     }
                     //Print the memory after build (for debug)
+                    printf("ZERO PAGE\n");
                     PrintMemory(monitorMem);
                     fclose(fbuild);
 
@@ -211,7 +221,11 @@ int main(int argc, char** argv) {
                 if (instruction)
                     free(instruction);
 
+                //Free the monitor memory
                 free(monitorMem);
+                //Free the labels list
+                FreeLBLBuffers(lblList, lblList->size);
+                free(lblList);
             }
         }
     }
@@ -293,4 +307,101 @@ char* remove_spaces(char* s) {
         }
     } while (*s++ = *d++);
     return s;
+}
+//Free the name buffers
+void FreeLBLBuffers(LABELS* LBL_LIST, int length) {
+    for (int i = 0; i < length; i++)
+        free(LBL_LIST[i].name);
+}
+
+//Interpret for the JMP command from a label
+void INTERP(char* fl, char* instruction, REGISTER regs, int jmpLine) {
+  FILE* file = fopen(fl, "r");
+  size_t* size;
+  int LineIndex = 0;
+  while (getline(&instruction, size, file) != -1) {
+    LineIndex++;
+    if (LineIndex >= jmpLine) {
+      if (*instruction != '\n') {
+        char* op = strtok(instruction, " ");
+        if (strcmp(op, "LDA") == 0) {
+          //Load Accumulator register
+          LoadRegister(op, & regs.A, monitorMem);
+          ReadRegs(regs);
+        } else if (strcmp(op, "LDX") == 0) {
+          //Load X register
+          LoadRegister(op, & regs.X, monitorMem);
+          ReadRegs(regs);
+        } else if (strcmp(op, "LDY") == 0) {
+          //Load Y register
+          LoadRegister(op, & regs.Y, monitorMem);
+          ReadRegs(regs);
+        } else if (strcmp(op, "STA") == 0) {
+          op = strtok(NULL, " ");
+          //If value is in hex
+          if (*op == '$') {
+            op += 1;
+            int val = (int) strtol(op, NULL, 16);
+            monitorMem[val] = regs.A;
+            //printf("%02x", monitorMem[1]);
+          }
+        } else if (strcmp(op, "STX") == 0) {
+          op = strtok(NULL, " ");
+          //If value is in hex
+          if (*op == '$') {
+            op += 1;
+            int val = (int) strtol(op, NULL, 16);
+            monitorMem[val] = regs.X;
+          }
+        } else if (strcmp(op, "STY") == 0) {
+          op = strtok(NULL, " ");
+          //If value is in hex
+          if (*op == '$') {
+            op += 1;
+            int val = (int) strtol(op, NULL, 16);
+            monitorMem[val] = regs.Y;
+            //printf("%02x", monitorMem[1]);
+          }
+        } else if (strcmp(op, "ADC") == 0) {
+          op = strtok(NULL, " ");
+          //If value is in hex
+          if (*op == '$') {
+            op += 1;
+
+            int val = (int) strtol(op, NULL, 16);
+            regs.A += monitorMem[val];
+          }
+        } else if (strcmp(op, "INC") == 0) {
+          //Incrementing at a memory address
+          op = strtok(NULL, " ");
+          //If value is in hex
+          if (*op == '$') {
+            op += 1;
+            int val = (int) strtol(op, NULL, 16);
+            monitorMem[val]++;
+          }
+        }
+        //Incrementing Register values 
+        else if (strcmp(strtok(op, "\n"), "INX") == 0) {
+          regs.X++;
+          ReadRegs(regs);
+        } else if (strcmp(strtok(op, "\n"), "INY") == 0) {
+          regs.Y++;
+        } else if (strcmp(op, "DEC") == 0) {
+          //Decrementing at a memory address
+          op = strtok(NULL, " ");
+          //If value is in hex
+          if (*op == '$') {
+            op += 1;
+            int val = (int) strtol(op, NULL, 16);
+            monitorMem[val]--;
+          }
+         } 
+         else if (strcmp(op, "JMP") == 0) {
+          //RECURSIVE
+          INTERP(fl, instruction, regs, jmpLine);
+        }
+      }
+    }
+  }
 }
