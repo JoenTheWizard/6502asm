@@ -1,0 +1,4 @@
+LDX #$00
+LBL:
+INX
+JMP LBL
