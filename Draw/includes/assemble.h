@@ -2,6 +2,7 @@
 //The program counter will increment each byte and interpret those hex
 //values. NOTE: 6502 is little endian.
 //Source: http://www.6502.org/tutorials/6502opcodes.html
+//Some undocumented opcodes such as "SAX" (0x87) which stores in both A and X register will be added soon too
 #include "defines.h"
 
 void ASM(int Line, uint8_t memory[ASM_MEMORY], REGISTER* reg, uint8_t* monitorMem) {
