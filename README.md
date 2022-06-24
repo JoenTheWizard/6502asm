@@ -6,6 +6,7 @@ Just learning through the process of emulation and 6502 assembly. The current st
 ## How to use
 To use the emulator:
 `./6502asm --build <6502asm-file>`
+
 For the time being it will print some debugging information. Such as the data memory, the assembly and disassembly and register values. 
 
 ## Understanding the 6502 assembly language
@@ -21,7 +22,7 @@ The three main registers that will be commonly used are the ones used for storag
 
 The Program Counter register is used to read each instruction from the assembly hexdump. Each instruction is read as an opcode, a value in hex for the computer, or the assembler, to interpret. The program counter is incremented each time until end of program. This register is 16 bit so it can store the addresses up to 0xffff.
 
-The Stack Pointer is used for storing the address within the stack, hence the name stack pointer. Most usually within the 6502 processor, the stack addresses usually occupy addresses from 0x0100 to 0x01ff, or within the Zero page of memory.
+The Stack Pointer is used for storing the address within the stack, hence the name stack pointer. Most usually within the 6502 processor, the stack addresses occupy addresses from 0x0100 to 0x01ff, or within the Zero page of memory.
 
 The Status register holds certain flags after certain operations. These flags are stored as singular bits and are interpreted by the CPU. Because this is an 8 bit register it stores 7 different flags (one unused). These flags consist of:
   - Carry (0)
