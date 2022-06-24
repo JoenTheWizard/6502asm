@@ -10,7 +10,7 @@ To use the emulator:
 For the time being it will print some debugging information. Such as the data memory, the assembly and disassembly and register values. 
 
 ## Understanding the 6502 assembly language
-The 6502 CPU assembly takes use of six different register, three of which are used for storage. These registers include:
+The 6502 CPU assembly takes use of six different registers, three of which are used for storage. These registers include:
   - Accumulator
   - X
   - Y
