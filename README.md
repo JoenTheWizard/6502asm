@@ -18,7 +18,7 @@ The 6502 CPU assembly takes use of six different registers, three of which are u
   - Stack Pointer
   - Status
 
-The three main registers that will be commonly used are the ones used for storage, which is the Accumulator, X and Y registers. What makes the accumulator register different from X and Y is that it is able to do arithmetic operations. These are useful for storing within memory via the registers. Values between these registers can also be transferred to each other.
+The three main registers that will be commonly used are the ones used for storage, which is the Accumulator, X and Y registers. What makes the accumulator register different from X and Y is that it is able to do arithmetic and logical operations. These are useful for storing within memory via the registers. Values between these registers can also be transferred to each other.
 
 The Program Counter register is used to read each instruction from the assembly hexdump. Each instruction is read as an opcode, a value in hex for the computer, or the assembler, to interpret. The program counter is incremented each time until end of program. This register is 16 bit so it can store the addresses up to 0xffff.
 
