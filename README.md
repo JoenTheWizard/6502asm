@@ -7,7 +7,7 @@ Just learning through the process of emulation and 6502 assembly. The current st
 To use the emulator:
 `./6502asm --build <6502asm-file>`
 
-For the time being it will print some debugging information. Such as the data memory, the assembly and disassembly and register values. 
+For the time being it will print some debugging information. Such as the data memory, the assembly (ROM) and disassembly and register values. 
 
 ## Understanding the 6502 assembly language
 The 6502 CPU assembly takes use of six different registers, three of which are used for storage. These registers include:
