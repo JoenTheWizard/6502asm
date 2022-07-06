@@ -1,5 +1,5 @@
 # 6502 Assembler
-Unfinished custom 6502 assembly emulator written in C.
+Unfinished custom 6502 assembly emulator written in C. The `Draw/` directory contains the more refined version of the emulator
 
 Just learning through the process of emulation and 6502 assembly. The current state of the emulator is unfinished.
 
