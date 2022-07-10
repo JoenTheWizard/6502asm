@@ -1,10 +1,11 @@
 # 6502 Assembler
-Unfinished custom 6502 assembly emulator written in C. The `6502_Improved/` directory contains the more refined version of the emulator
+Unfinished custom 6502 assembly emulator written in C. The `6502_Improved/` directory contains the more refined version of the emulator. It's using the SDL library for the Graphical output.
 
 Just learning through the process of emulation and 6502 assembly. The current state of the emulator is unfinished.
 
 ## How to use
 To use the emulator:
+
 `./6502asm --build <6502asm-file>`
 
 For the time being it will print some debugging information. Such as the data memory, the assembly (ROM) and disassembly and register values. 
