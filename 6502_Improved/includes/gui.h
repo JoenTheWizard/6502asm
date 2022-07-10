@@ -14,7 +14,7 @@ void* OpenGUI(void *vargp) {
     SDL_Renderer* renderer = NULL;
     renderer =  SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    // Set render color to red ( background will be rendered in this color )
+    // Set render color to black (background will be rendered in this color)
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
     // Clear winow
