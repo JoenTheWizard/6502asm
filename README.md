@@ -52,5 +52,5 @@ Output of visual representation of the storage memory:
 Loading with a register is typically used with `LD`. There is `LDA`, `LDX` and `LDY`. So within the code above, we loaded the value '0x03' within the 'A' (accumulator) register. It will store this value until the register value is changed. The prefix used within this instruction `#$` is used to define that we are using a literal value, a constant value or a value not loaded from memory. The second instruction, `ST` (which include `STA`, `STX` and `STY`) is used to store within the memory at a specified address from the value of a register. In this case we're using `$0002` to represent the address. Then from the output we can see that the value from out Accumulator register is loaded within the memory address of 0x0002.
 
 ## Good sources
-http://www.6502.org/tutorials/6502opcodes.html
-https://skilldrick.github.io/easy6502/
+  - http://www.6502.org/tutorials/6502opcodes.html
+  - https://skilldrick.github.io/easy6502/
