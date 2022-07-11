@@ -53,3 +53,4 @@ Loading with a register is typically used with `LD`. There is `LDA`, `LDX` and `
 
 ## Good sources
 http://www.6502.org/tutorials/6502opcodes.html
+https://skilldrick.github.io/easy6502/
