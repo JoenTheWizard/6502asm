@@ -51,24 +51,9 @@ Output of visual representation of the storage memory:
 
 Loading with a register is typically used with `LD`. There is `LDA`, `LDX` and `LDY`. So within the code above, we loaded the value '0x03' within the 'A' (accumulator) register. It will store this value until the register value is changed. The prefix used within this instruction `#$` is used to define that we are using a literal value, a constant value or a value not loaded from memory. The second instruction, `ST` (which include `STA`, `STX` and `STY`) is used to store within the memory at a specified address from the value of a register. In this case we're using `$0002` to represent the address. Then from the output we can see that the value from our Accumulator register is loaded within the memory address of 0x0002.
 
-For graphics output, within this simulator, you would need to use memory addresses within `$0200` and `$05ff`. The 6502 only provides 16 different colors represented by a nibble from each byte. These colors are:
- - $0: Black
- - $1: White
- - $2: Red
- - $3: Cyan
- - $4: Purple
- - $5: Green
- - $6: Blue
- - $7: Yellow
- - $8: Orange
- - $9: Brown
- - $a: Light red
- - $b: Dark grey
- - $c: Grey
- - $d: Light green
- - $e: Light blue
- - $f: Light grey
+For graphics output, within this simulator, you would need to use memory addresses within `$0200` and `$05ff`. The 6502 only provides 16 different colors represented by a nibble from each byte.
 
 ## Good sources
+For more sources here are:
   - http://www.6502.org/tutorials/6502opcodes.html
   - https://skilldrick.github.io/easy6502/
