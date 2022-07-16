@@ -1,7 +1,7 @@
 # 6502 Assembler
-Unfinished custom 6502 assembly emulator written in C. The `6502_Improved/` directory contains the more refined and better functioning version of the emulator. It's using the SDL library for the Graphical output.
+Unfinished custom 6502 assembly simulator/emulator written in C. The `6502_Improved/` directory contains the more refined and better functioning version of the emulator. It's using the SDL library for the Graphical output.
 
-Just learning through the process of emulation and 6502 assembly. The current state of the emulator is unfinished.
+Just learning through the process of simulation and emulation and 6502 assembly. The current state of the simulator is unfinished.
 
 ## How to use
 To use the emulator:
