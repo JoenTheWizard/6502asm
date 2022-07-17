@@ -51,7 +51,21 @@ Output of visual representation of the storage memory:
 
 Loading with a register is typically used with `LD`. There is `LDA`, `LDX` and `LDY`. So within the code above, we loaded the value '0x03' within the 'A' (accumulator) register. It will store this value until the register value is changed. The prefix used within this instruction `#$` is used to define that we are using a literal value, a constant value or a value not loaded from memory. The second instruction, `ST` (which include `STA`, `STX` and `STY`) is used to store within the memory at a specified address from the value of a register. In this case we're using `$0002` to represent the address. Then from the output we can see that the value from our Accumulator register is loaded within the memory address of 0x0002.
 
-For graphics output, within this simulator, you would need to use memory addresses within `$0200` and `$05ff`. The 6502 only provides 16 different colors represented by a nibble from each byte.
+## Some things to note
+1. For graphics output, within this simulator, you would need to use memory addresses within `$0200` and `$05ff`. The 6502 only provides 16 different colors represented by a nibble from each byte.
+
+2. When using the `JMP` instruction in Indirect addressing mode, the last byte in a page is wrapped around to the first byte within a page. An example
+```assembly
+LDA #$40
+STA $3000
+LDA #$80
+STA $30FF
+LDA #$50
+STA $3100
+JMP ($30FF) ; Program Counter will equal to '$4080' rather than '$5080' than intended. So it wrapped around the page ($xx00 - $xxff)
+```
+
+3. The 6502 has some undocumented opcodes such as 'SAX' which is used to store values within both A and X register and many others (More on 'illegal' opcodes https://www.masswerk.at/nowgobang/2021/6502-illegal-opcodes)
 
 ## Good sources
 For more sources here are:
