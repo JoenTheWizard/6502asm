@@ -54,7 +54,7 @@ Loading with a register is typically used with `LD`. There is `LDA`, `LDX` and `
 ## Some things to note
 1. For graphics output, within this simulator, you would need to use memory addresses within `$0200` and `$05ff`. The 6502 only provides 16 different colors represented by a nibble from each byte.
 
-2. When using the `JMP` instruction in Indirect addressing mode, the last byte in a page is wrapped around to the first byte within a page. An example
+2. When using the `JMP` instruction in Indirect addressing mode, the last byte in a page is wrapped around to the first byte within that page. An example
 ```assembly
 LDA #$40
 STA $3000
