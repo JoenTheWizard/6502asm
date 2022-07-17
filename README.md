@@ -10,7 +10,7 @@ To use the emulator:
 
 For graphics output
 
-`./6502asm --build <6502asm-file> --visual | -v`
+`./6502asm --build <6502asm-file> [--visual | -v]`
 
 For the time being it will print some debugging information. Such as the data memory, the assembly (ROM) and disassembly and register values. 
 
