@@ -192,7 +192,7 @@ void ASM(int Line, uint8_t memory[ASM_MEMORY], REGISTER* reg, uint8_t* monitorMe
                 jmpAdr1 |= monitorMem[jmpAdr0];
                 //In indirect mode we must check for the high byte
                 //(if first vector is at $xxFF address then it wraps about to $xx00 for next address)
-                jmpAdr1 |= jmpAdr0 & 0xFF == 0xFF ? (monitorMem[jmpAdr0 - 0xFF] << 8) :
+                jmpAdr1 |= jmpAdr0 & 0xFF == 0xFF ? (monitorMem[jmpAdr0 ^ 0xFF] << 8) :
                     (monitorMem[jmpAdr0 + 1] << 8);
                 //printf("OUR PC: %04x\n",jmpAdr1);
                 reg->PC = jmpAdr1;
