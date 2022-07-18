@@ -1,1 +1,0 @@
-gcc 6502asm.c -o 6502asm -g -lSDL2 -lpthread
