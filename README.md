@@ -67,6 +67,8 @@ JMP ($30FF) ; Program Counter will equal to '$4080' rather than '$5080' than int
 
 3. The 6502 has some undocumented opcodes such as 'SAX' which is used to store values within both A and X register and many others (More on 'illegal' opcodes https://www.masswerk.at/nowgobang/2021/6502-illegal-opcodes)
 
+4. The random number generator is located at memory address `$fe`
+
 ## Good sources
 For more sources here are:
   - http://www.6502.org/tutorials/6502opcodes.html
