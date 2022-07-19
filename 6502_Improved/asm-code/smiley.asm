@@ -1,0 +1,37 @@
+LDA #$01
+STA $030b
+LDA #$01
+STA $0311
+
+LDA #$01
+STA $03f2
+
+LDA #$01
+STA $03f1
+
+LDA #$01
+STA $03f0
+
+LDA #$01
+STA $03ef
+
+LDA #$01
+STA $03ee
+
+LDA #$01
+STA $03ed
+
+LDA #$01
+STA $03ec
+
+LDA #$01
+STA $03eb
+
+LDA #$01
+STA $03ea
+
+LDA #$01
+STA $03d3
+
+LDA #$01
+STA $03c9
