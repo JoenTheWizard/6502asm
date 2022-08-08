@@ -69,6 +69,9 @@ JMP ($30FF) ; Program Counter will equal to '$4080' rather than '$5080' than int
 
 4. The random number generator is located at memory address `$fe`
 
+
+
+
 ![](imgs/6502asm-smiley.png)
 
 ## Good sources
