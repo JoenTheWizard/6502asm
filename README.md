@@ -4,7 +4,7 @@ Unfinished custom 6502 assembly simulator/emulator written in C. The `6502_Impro
 Just learning through the process of simulation and emulation and 6502 assembly. The current state of the simulator is unfinished.
 
 ## How to use
-To use the emulator:
+To use the emulator:  
 
 `./6502asm --build <6502asm-file>`
 
