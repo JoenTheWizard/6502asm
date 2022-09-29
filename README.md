@@ -29,7 +29,7 @@ The Program Counter register is used to read each instruction from the assembly 
 
 The Stack Pointer is used for storing the address within the stack, hence the name stack pointer. Most usually within the 6502 processor, the stack addresses occupy addresses from 0x0100 to 0x01ff, or within the Zero page of memory.
 
-The Status register holds certain flags after certain operations. These flags are stored as singular bits and are interpreted by the CPU. Because this is an 8 bit register it stores 7 different flags (one unused). These flags consist of:
+The Status register holds certain flags after certain operations. These flags are stored as singular bits and are interpreted by the CPU and are helpful when dealing with branching operations. Because this is an 8 bit register it stores 7 different flags (one unused). These flags consist of:
   - Carry (0)
   - Zero (1)
   - Disable Interrupts (2)
