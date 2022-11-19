@@ -1,1 +1,0 @@
-/home/joenwiz/Desktop/Scripts/Rust-Projects/asm6502/target/debug/asm6502: /home/joenwiz/Desktop/Scripts/Rust-Projects/asm6502/src/main.rs /home/joenwiz/Desktop/Scripts/Rust-Projects/asm6502/src/opcode6502.rs
