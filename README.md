@@ -4,7 +4,7 @@ Unfinished custom 6502 assembly simulator/emulator written in C. The `6502_Impro
 Just learning through the process of simulation and emulation and 6502 assembly. The current state of the emulator is unfinished.
 
 
-Also have plans to port this as a C++ and Rust library for people who don't like C
+Also have plans to port this as a C++ and Rust library (`6502asm_rs`) for people who don't like C
 ## How to use
 To use the emulator:  
 
