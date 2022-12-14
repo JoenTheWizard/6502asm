@@ -16,7 +16,7 @@ For graphics output
 
 For the time being it will print some debugging information. Such as the data memory, the assembly (ROM) and disassembly and register values. 
 
-## Understanding the 6502 assembly language
+## Understanding the 6502 assembly language and CPU
 The 6502 CPU assembly takes use of six different registers, three of which are used for storage. These registers include:
   - Accumulator
   - X
