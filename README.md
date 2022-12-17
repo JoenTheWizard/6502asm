@@ -5,7 +5,7 @@ Just learning through the process of simulation and emulation and 6502 assembly.
 
 Also have plans to port this as a C++ and Rust library (`6502asm_rs`) for people who don't like C.
 
-On top of that, I am also working for a 6502 compiler with 'C-like' syntax.
+On top of that, I am also working on a 6502 compiler with 'C-like' syntax.
 ## How to use
 To use the emulator:  
 
