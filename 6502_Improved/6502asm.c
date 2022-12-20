@@ -1,5 +1,6 @@
 //Im just going to try and write a simple 6502 assembly interpreter. Might implement
-//graphics output too possibly (graphics.h, SDL, GTK are options).
+//TODO: Labels, binary representation ('%'), rest of the opcodes
+
 //Simple hello world in 6502 asm: https://youtu.be/9hLGvLvTs1w
 #include <pthread.h>
 #include <assert.h>
@@ -56,22 +57,22 @@ static struct {
     {"CPX", &CPX}, {"CPY", &CPY}, {"JMP", &JMP},
 };
 
-//Im very fucking lazy to fix this might change this later to store it all in one array
+//Im very fucking lazy so I stored 1 byte op-codes into a seperate array to store it's hex op-code
+//rather than storing a function pointer like the 2-3 byte op-code counter-part
 static struct {
     char* OP_CODE_SINGULAR;
-    char* OP_CODE_SINGULAR_N;
     uint8_t hex_val;
 } ops_singular[] = {
-    {"INX","INX\n",0xE8}, {"INY","INY\n",0xC8},
-    {"DEX","DEX\n",0xCA}, {"DEY","DEY\n",0x88},
-    {"TAX","TAX\n",0xAA}, {"TXA","TXA\n",0x8A},
-    {"TAY","TAY\n",0xA8}, {"TYA","TYA\n",0x98},
-    {"TXS","TXS\n",0x9A}, {"TSX","TSX\n",0xBA},
-    {"PHA","PHA\n",0x48}, {"PLA","PLA\n",0x68},
-    {"NOP","NOP\n",0xEA}, {"SEC","SEC\n",0x38},
-    {"SED","SED\n",0xF8}, {"SEI","SEI\n",0x78},
-    {"CLC","CLC\n",0x18}, {"CLD","CLD\n",0xD8},
-    {"CLI","CLI\n",0x58},
+    {"INX",0xE8}, {"INY",0xC8},
+    {"DEX",0xCA}, {"DEY",0x88},
+    {"TAX",0xAA}, {"TXA",0x8A},
+    {"TAY",0xA8}, {"TYA",0x98},
+    {"TXS",0x9A}, {"TSX",0xBA},
+    {"PHA",0x48}, {"PLA",0x68},
+    {"NOP",0xEA}, {"SEC",0x38},
+    {"SED",0xF8}, {"SEI",0x78},
+    {"CLC",0x18}, {"CLD",0xD8},
+    {"CLI",0x58},
 };
 // ===========================================
 
@@ -144,10 +145,12 @@ int main(int argc, char** argv) {
                                         }
                                     }
 
+                                    //Just need to get rid of new line character
+                                    op[strcspn(op,"\n")] = '\0';
+
                                     //Singular instructions
                                     for (int i = 0; i < sizeof(ops_singular)/sizeof(ops_singular[0]); i++) {
-                                        if (!strcmp(op, ops_singular[i].OP_CODE_SINGULAR) || 
-                                                    !strcmp(op, ops_singular[i].OP_CODE_SINGULAR_N)) {
+                                        if (!strcmp(op, ops_singular[i].OP_CODE_SINGULAR)) {
                                             assembly[LineIndex] = ops_singular[i].hex_val;
                                             label_ = 0;
                                         }
