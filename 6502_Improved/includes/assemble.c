@@ -356,6 +356,24 @@ void ASM(int Line, uint8_t memory[ASM_MEMORY], REGISTER* reg, uint8_t* monitorMe
             case 0xCC:
                 _cmp_instruction(reg, &reg->Y, monitorMem[Bit16Adr(reg, monitorMem)]);
                 break;
+            //ROL
+            case 0x2A:
+                reg->A <<= 1;
+                break;
+            case 0x26:
+                reg->PC++;
+                monitorMem[monitorMem[reg->PC]] <<= 1;
+                break;
+            case 0x36:
+                reg->PC++;
+                monitorMem[monitorMem[reg->PC] + reg->X] <<= 1;
+                break;
+            case 0x2E:
+                monitorMem[Bit16Adr(reg, monitorMem)] <<= 1;
+                break;
+            case 0x3E:
+                monitorMem[Bit16Adr(reg, monitorMem) + reg->X] <<= 1;
+                break;
             //JMP
             case 0x4C:
                 reg->PC++;

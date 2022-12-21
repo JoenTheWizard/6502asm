@@ -57,5 +57,8 @@ void CPX(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd);
 //CPY
 void CPY(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd);
 
+//ROL
+void ROL(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd);
+
 //JMP
 void JMP(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd);

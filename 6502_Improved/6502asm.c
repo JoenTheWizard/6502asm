@@ -55,6 +55,7 @@ static struct {
     {"ADC", &ADC}, {"INC", &INC}, {"DEC", &DEC},
     {"ASL", &ASL}, {"AND", &AND}, {"CMP", &CMP}, 
     {"CPX", &CPX}, {"CPY", &CPY}, {"JMP", &JMP},
+    {"ROL", &ROL},
 };
 
 //Im very fucking lazy so I stored 1 byte op-codes into a seperate array to store it's hex op-code

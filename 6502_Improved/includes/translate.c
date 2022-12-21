@@ -1,6 +1,7 @@
 #include "translate.h"
 
 //For translation of each instruction
+//This can be improved but will do that later
 
 //For strings and stuff
 char* CheckRegisterOffset(char* op) {
@@ -544,6 +545,40 @@ void CPY(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
         if (op[2] != '\0') {
             op+=2;
             Store2byte_instr(0xC0, assemble, op, LineInd);
+        }
+    }
+}
+
+//ROL
+void ROL(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
+    if (op != NULL) {
+        //Accumulator
+        if (op[0] == 'A') {
+            assemble[*LineInd] = 0x2A;
+        }
+        else if (*op == '$') {
+            if (op[1] != '\0') {
+                op++;
+                char* offSetReg = CheckRegisterOffset(op);
+                if (offSetReg != NULL) {
+                    //Zero Page,X
+                    if (strlen(strtok(op,"\n")) <= 2 && offSetReg[0] == 'X')
+                        Store2byte_instr(0x36, assemble, op, LineInd);
+                    //Absolute,X
+                    else if (strlen(strtok(op,"\n")) <= 4 && offSetReg[0] == 'X')
+                        Store3byte_instr(0x3E, assemble, op, LineInd);
+                } 
+                else {
+                    //Zero Page
+                    if (strlen(strtok(op,"\n")) <= 2) {
+                        Store2byte_instr(0x26, assemble, op, LineInd);
+                    }
+                    //Absolute
+                    else if (strlen(strtok(op,"\n")) <= 4) {
+                        Store3byte_instr(0x2E, assemble, op, LineInd);
+                    }
+                }
+            }
         }
     }
 }
