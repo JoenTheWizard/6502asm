@@ -117,19 +117,28 @@ pub fn interp_instruc(path : &str) -> Box<[u8]> {
     let mut arr : Vec<u8> = Vec::with_capacity(0xf9ff); 
 
     for l_ in s_.lines() {
-        let q_ : Vec<&str> = l_.split(" ").collect();
+        let mut q_ : Vec<&str> = l_.split(" ").collect();
         match q_[0] {
             "LDA" => {
-                //println!("{}", q_[1]);
                 arr.push(0xA9);
-                arr.push(interp_opcode_(q_[1]));
+
+                //Extra error handling
+                let sec_arg  = match q_.get_mut(1) {
+                    Some(q) => { *q },
+                    None => { 
+                        println!("[-] 6502asm Error. There was an error parsing the opcode"); 
+                        break; 
+                        ""
+                    }
+                };
+
+                arr.push(interp_opcode_(sec_arg));
             },
             _ => {}
         }
     }
 
-    //let arr : Vec<u8> = vec![0xa9, 0x1a];
-    let dynamic_alloc : Box<[u8]> = arr.into_boxed_slice();
+    //let dynamic_alloc : Box<[u8]> = arr.into_boxed_slice();
 
-    dynamic_alloc
+    arr.into_boxed_slice()
 }

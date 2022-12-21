@@ -1,4 +1,4 @@
-LDA #$1a
+LDA #$3a
 LDA #$9b
 LDA #$08
 LDA #$f1

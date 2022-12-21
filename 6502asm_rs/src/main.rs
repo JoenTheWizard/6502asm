@@ -42,6 +42,7 @@ fn main() {
 
     dbg!(registers);
 
+    println!("\nINTERPRET TEST");
     for j in t {
         println!("{}", j);
     }
