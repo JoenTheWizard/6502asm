@@ -4,6 +4,7 @@
 //Simple hello world in 6502 asm: https://youtu.be/9hLGvLvTs1w
 #include <pthread.h>
 #include <assert.h>
+#include <signal.h>
 #include "includes/register.h"
 #include "includes/translate.h"
 #include "includes/assemble.h"
@@ -14,10 +15,12 @@ void ReadRegs(REGISTER reg);
 void PrintFile(const char* fileName, int isHex);
 void PrintMemory(uint8_t* mems);
 
+#pragma region STRING
 //String manipulation
 char* remove_spaces(char* s);
 char* toUppercase(char* s);
 int is_empty(const char* s);
+#pragma endregion
 
 //Take into account singular opcode
 int strcmp_singular(char* op, char* c1, char* c2);
@@ -33,6 +36,8 @@ int LineIndex = 0;
 
 //Check if instruction is a label or not
 int isLabel = 0;
+
+static void wrapup(void);
 
 //Labels list
 #define LBL_LENGTH 64
@@ -180,6 +185,10 @@ int main(int argc, char** argv) {
                             }
                         }
                     }
+
+                    //Handle signal interrupts
+                    signal(SIGINT, (void(*)())wrapup);
+
                     //ASSEMBLE
                     ASM(LineIndex,assembly,&regs,monitorMem);
 
@@ -302,4 +311,14 @@ char* toUppercase(char* s) {
             s[i] = s[i] - 32;
     }
     return s;
+}
+
+//SIGINT deallocation.
+//Not all of the heap buffers are deallocated but I'll fix that later
+static void wrapup(void) {
+    free(monitorMem);
+    //Free the labels list
+    FreeLBLBuffers(lblList, lblList->size);
+    free(lblList);
+    exit(0);
 }
