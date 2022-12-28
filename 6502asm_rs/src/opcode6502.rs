@@ -13,6 +13,17 @@ pub struct Reg6502 {
     pub stack_ptr : u8
 }
 
+pub enum StatusFlags {
+    C = (1 << 0), //Carry bit
+    Z = (1 << 1), //Zero
+    I = (1 << 2), //Disable Interrupts
+    D = (1 << 3), //Decimal mode
+    B = (1 << 4), //Break
+    U = (1 << 5), //Unused
+    V = (1 << 6), //Overflow
+    N = (1 << 7), //Negative
+}
+
 impl Reg6502 {
     pub fn print_regs(&self) {
         println!("A: {:#02x}\nX: {:#02x}\nY: {:#02x}\nSTATUS: {:#02x}\nPROG: {:#02x}\nSTACK: {:#02x}",
