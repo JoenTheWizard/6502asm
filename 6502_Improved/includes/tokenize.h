@@ -9,14 +9,14 @@
 
 //Enum of all possible tokens
 typedef enum {
-  //INSTRUCTIONS (> 1 byte opcodes)
+  //Instructions (> 1 byte opcodes)
   LDA_, LDX_, LDY_,
   STA_, STX_, STY_,
   ADC_, INC_, DEC_,
   ASL_, AND_, CMP_,
   CPX_, CPY_, JMP_,
   ROL_,
-  //INSTRUCTIONS (1 byte opcodes)
+  //Instructions (1 byte opcodes)
   INX_, INY_, DEX_,
   DEY_, TAX_, TXA_,
   TAY_, TYA_, TXS_,
@@ -27,16 +27,26 @@ typedef enum {
   //Symbols
   HASHTAG_, DOLLARSIGN_,
   OPENBRACKET_, CLOSEBRACKET_,
-  COMMA_, PERCENT_,
+  COMMA_, PERCENT_, SEMICOLON_,
+  X_, Y_,
   //Numerical
-  INT_BASE10, INT_BASE16
+  INT_BASE2, INT_BASE10, INT_BASE16,
+  //Label identifiers
+  LABEL_IDENTIFIER_,
+  //End of file and unknown
+  EOF_ = -1, UNKNOWN_,
+
 } ASM6502_TOKENS;
 
-//Implement list of tokens
+//Important struct to store all the tokenized values to be later on parsed
+typedef struct {
+  ASM6502_TOKENS tok;
+  char* value;
+} Tokens;
 
 //Initialize node
 typedef struct node {
-    ASM6502_TOKENS data;
+    Tokens data;
     struct node* next;
 } Token_Node;
 
@@ -57,10 +67,10 @@ Token_List* initList();
 Token_Node* initNode();
 
 //Add element to list
-void add_tok_l(Token_List* list, ASM6502_TOKENS data);
+void add_tok_l(Token_List* list, Tokens data);
 
 //Push to list
-void push_tok_l(Token_List* list, ASM6502_TOKENS data);
+void push_tok_l(Token_List* list, Tokens data);
 
 //Pop from list
 int pop_tok_l(Token_List* list);

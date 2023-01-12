@@ -111,6 +111,8 @@ int main(int argc, char** argv) {
             ReadRegs(regs);
         if (strcmp(argv[1],"--test")==0) {
             printf("This is just used for debugging.\n");
+
+            tokenize_file("test.asm");
         }
         else if (argc >= 3) {
             if (strcmp(argv[1],"--read") == 0) {
