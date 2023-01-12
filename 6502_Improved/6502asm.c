@@ -10,6 +10,7 @@
 #include "includes/assemble.h"
 #include "includes/gui.h"
 #include "includes/defines.h"
+#include "includes/tokenize.h"
 
 void ReadRegs(REGISTER reg);
 void PrintFile(const char* fileName, int isHex);

@@ -2,6 +2,8 @@
 
 //For translation of each instruction
 //This can be improved but will do that later
+//As for now 'tokenize.c/h' will contain simple tokenization for the assembly language
+//translate.c/h will be used for now
 
 //For strings and stuff
 char* CheckRegisterOffset(char* op) {
