@@ -3,9 +3,12 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
 //6502 assembly tokenization for better formatting 
 //Will be used to replace 'translate.c' later after this has been completed
+//Still experimenting might be or not be used to be honest
 
 //Enum of all possible tokens
 typedef enum {

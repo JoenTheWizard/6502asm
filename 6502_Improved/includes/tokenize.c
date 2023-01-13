@@ -56,15 +56,52 @@ void tokenize_file(char* path) {
 
     //EOF
     textbuffer[index] = EOF_;
+    
     //Restate the index
     index = 0;
     ch = textbuffer[index];
 
+    //Store token
+    ASM6502_TOKENS token = UNKNOWN_;
+
     //While 'ch' is not at the end of file
     //This is where the tokenization process will occur
     while (ch != EOF_) {
-        printf("%c", ch);
-        ch = textbuffer[++index];
+        //Get character at index
+        ch = textbuffer[index];
+
+        //Check if character is alphabetical (instruction names)
+        if (isalpha(ch)) {
+            //(Temp for now) Store buffer
+            char currentTokString[16];
+
+            int i = 0;
+            while (isalpha(ch) || isdigit(ch)) {
+                //Store character at buffer
+                currentTokString[i++] = ch;
+                //Increment character
+                ch = textbuffer[++index];
+            }
+            currentTokString[i] = '\0';
+            //Check for the instruction keyword
+            for (int i = 0; i < sizeof(keywords)/sizeof(keywords[0]); i++) {
+                //Push the token to the list
+                if (!strncmp(currentTokString, keywords[i].value, 16))
+                    add_tok_l(tokens, keywords[i]);
+            }
+        }
+        else {
+            switch (ch) {
+                case '#':
+                    ch = textbuffer[++index];
+                    Tokens hashtok = {HASHTAG_, "#"};
+                    add_tok_l(tokens, hashtok);
+                    break;
+                default:
+                    index++;
+                    break;
+            }
+        }
     }
 
     #pragma region TOKEN PRINTING DEBUGGING
