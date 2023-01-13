@@ -21,7 +21,7 @@ START:
     STA $0201
     LDA #$08
     STA $0202
-
+COOL:
     INY
     STX $10,Y
     DEC $0001,X

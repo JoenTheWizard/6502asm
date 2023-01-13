@@ -173,8 +173,9 @@ int main(int argc, char** argv) {
                                         lblList[lblList->size].lineNumber = LineIndex;
                                         lblList[lblList->size].name = (char*)malloc(sizeof(char)*strlen(op)+1);
                                         strncpy(lblList[lblList->size].name,op,strlen(op));
-
-                                        printf("%s: %i\n", lblList[lblList->size].name, lblList[lblList->size].lineNumber);
+                                        
+                                        //Print memory location of the label (incremented by program counter)
+                                        printf("%s: %04x\n", lblList[lblList->size].name, regs.PC + lblList[lblList->size].lineNumber);
 
                                         lblList->size++;
 
