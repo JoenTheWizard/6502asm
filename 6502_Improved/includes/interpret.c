@@ -35,7 +35,14 @@ void InterpretFile(char* filePath) {
                 memcpy(getOPCode, lineInstructions, 4);
                 getOPCode[3] = '\0';
 
+                //Obtain arguments by padding out the opcode string
+                char* instr_cp = (char*)malloc(read * sizeof(char));
+                memcpy(instr_cp, &lineInstructions[3], read);
+
                 printf("%s\n", getOPCode);
+                //printf("%d %s\n", strlen(instr_cp), instr_cp);
+
+                free(instr_cp);
             }
         }
     }
