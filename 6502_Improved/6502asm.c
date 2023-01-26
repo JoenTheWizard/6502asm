@@ -11,6 +11,7 @@
 #include "includes/gui.h"
 #include "includes/defines.h"
 #include "includes/tokenize.h"
+#include "includes/interpret.h"
 
 void ReadRegs(REGISTER reg);
 void PrintFile(const char* fileName, int isHex);
@@ -112,7 +113,8 @@ int main(int argc, char** argv) {
         if (strcmp(argv[1],"--test")==0) {
             printf("This is just used for debugging.\n");
 
-            tokenize_file("test.asm");
+            InterpretFile("test.asm");
+            //tokenize_file("test.asm");
         }
         else if (argc >= 3) {
             if (strcmp(argv[1],"--read") == 0) {
