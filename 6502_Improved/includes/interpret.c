@@ -3,19 +3,30 @@
 //Store the instructions to read line by line
 char* lineInstructions;
 
+//Store each line number
+int LineNumber;
+
+//Store byte index
+int byteIndex;
+
 //Simple interpretation of 6502 assembly language
 void InterpretFile(char* filePath) {
-    //Read the file
+    //Read the file and other init
     FILE* fbuild;
     lineInstructions = NULL;
     size_t len = 0;
     ssize_t read;
 
+    //Line Number init
+    LineNumber = 1;
+
     //Read file at path
     fbuild = fopen(filePath, "r");
     //If unable to read file
-    if (fbuild == NULL)
+    if (fbuild == NULL) {
+        fprintf(stderr, "[-] 6502asm is unable to read file '%s'", filePath);
         exit(EXIT_FAILURE);
+    }
     
     //Read each line by line
     while ((read = getline(&lineInstructions, &len, fbuild)) != -1) {
@@ -39,12 +50,20 @@ void InterpretFile(char* filePath) {
                 char* instr_cp = (char*)malloc(read * sizeof(char));
                 memcpy(instr_cp, &lineInstructions[3], read);
 
-                printf("%s\n", getOPCode);
-                //printf("%d %s\n", strlen(instr_cp), instr_cp);
+                //Remove any leading whitespaces from the instruction argument
+                trim_string(instr_cp);
 
+                //Must check for empty argument for argument parsing
+                if (strlen(instr_cp) != 0) {
+                    printf("%d %d %s %s\n", LineNumber, strlen(instr_cp), getOPCode, instr_cp);
+                }
+
+                //Deallocate
                 free(instr_cp);
             }
         }
+        //Increment for each line
+        LineNumber++;
     }
 
     //Deallocation

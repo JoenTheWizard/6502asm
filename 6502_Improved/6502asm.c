@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
     else {
         if (argc == 2 && strcmp(argv[1],"regs")==0)
             ReadRegs(regs);
-        if (strcmp(argv[1],"--test")==0) {
+        if (!strcmp(argv[1],"--test")) {
             printf("This is just used for debugging.\n");
 
             InterpretFile("test.asm");
