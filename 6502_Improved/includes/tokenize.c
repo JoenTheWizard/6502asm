@@ -29,6 +29,15 @@ static Tokens keywords[] = {
     {CLD_, "CLD"}, {CLI_, "CLI"},
 };
 
+//Argument tokenizing
+void tokenize_args(char* arg) {
+    while (*arg != '\0') {
+        printf("%c", *arg);
+        *arg++;
+    }
+    printf("\n");
+}
+
 //Need to tokenize the file and return tokenized list
 void tokenize_file(char* path) {
     //Initialize the tokens list

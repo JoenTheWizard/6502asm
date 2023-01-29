@@ -46,20 +46,33 @@ void InterpretFile(char* filePath) {
                 memcpy(getOPCode, lineInstructions, 4);
                 getOPCode[3] = '\0';
 
-                //Obtain arguments by padding out the opcode string
-                char* instr_cp = (char*)malloc(read * sizeof(char));
-                memcpy(instr_cp, &lineInstructions[3], read);
+                //Is the Opcode we're passing valid?
+                if (isValidOpcode(getOPCode)) {
+                    //Obtain arguments by padding out the opcode string
+                    char* instr_cp = (char*)malloc(read * sizeof(char));
+                    memcpy(instr_cp, &lineInstructions[3], read);
 
-                //Remove any leading whitespaces from the instruction argument
-                trim_string(instr_cp);
+                    //Remove any leading whitespaces from the instruction argument
+                    trim_string(instr_cp);
 
-                //Must check for empty argument for argument parsing
-                if (strlen(instr_cp) != 0) {
-                    printf("%d %d %s %s\n", LineNumber, strlen(instr_cp), getOPCode, instr_cp);
+                    //Must check for empty argument for argument parsing
+                    if (strlen(instr_cp) != 0) {
+                        //printf("%d %d %s %s\n", LineNumber, strlen(instr_cp), getOPCode, instr_cp);
+                        //If argument is not label but uses these characters
+                        if (*instr_cp == '$' || *instr_cp == '#' || *instr_cp == '%') {
+                            //Check what mode the argument is
+                            tokenize_args(instr_cp);
+                        }
+                    }
+
+                    //Deallocate
+                    free(instr_cp);
                 }
-
-                //Deallocate
-                free(instr_cp);
+                //Otherwise error
+                else {
+                    fprintf(stderr, "[-] 6502asm raised an error at line %d. Unrecognized opcode '%s'\n", LineNumber, getOPCode);
+                    break;
+                }
             }
         }
         //Increment for each line
@@ -80,7 +93,6 @@ int isOPCode(char* lineInstr) {
     while (lineInstr[i] != '\0') {
         if (lineInstr[i] == ' ')
             break;
-        //printf("%c", lineInstr[i]);
         i++;
     }
     //Check if an opcode
@@ -88,6 +100,17 @@ int isOPCode(char* lineInstr) {
     //printf("\n");
 
     return i == 3 ? 1 : 0;
+}
+
+//Check if the parsed "opcode" is valid
+int isValidOpcode(char* opcode) {
+    for (int i = 0; i < sizeof(tokens_k)/sizeof(tokens_k[0]); i++) {
+        //If found then is true
+        if (!strncmp(opcode, tokens_k[i].op, 4))
+            return 1;
+    }
+    //Otherwise not
+    return 0;
 }
 
 //Check for empty strings

@@ -10,6 +10,18 @@
 //Will be used to replace 'translate.c' later after this has been completed
 //Still experimenting might be or not be used to be honest
 
+//Each opcode has different 'modes' meaning how it interprets arguments
+typedef enum  {
+    NONE,
+    ACCUMULATOR,
+    IMMEDIATE,
+    ZERO_PAGE, ZERO_PAGE_X,
+    ABSOLUTE, ABSOLUTE_X, ABSOLUTE_Y,
+    INDIRECT, INDIRECT_X, INDIRECT_Y
+} OP_MODES;
+
+#define STANDARD_MODES IMMEDIATE | ZERO_PAGE | ABSOLUTE
+
 //Enum of all possible tokens
 typedef enum {
   //Instructions (> 1 byte opcodes)
@@ -60,6 +72,9 @@ typedef struct {
 
 //Read the file and return stream
 void tokenize_file(char* path);
+
+//Tokenizing the arguments interperting from opcode
+void tokenize_args(char* arg);
 
 //=== Tokens list methods ===
 
