@@ -124,7 +124,8 @@ int main(int argc, char** argv) {
                 //File allocate
                 FILE* fbuild;
                 char* instruction = malloc(1024*sizeof(char));
-                size_t* size;
+                size_t size;
+                ssize_t read;
                 //Once we try and build, init the monitor memory
                 monitorMem = (uint8_t*)malloc(sizeof(uint8_t)*ROM);
                 //Allocate for labels
@@ -134,63 +135,112 @@ int main(int argc, char** argv) {
 
                 if (fbuild = fopen(*(argv+2),"r"))
                 {
-                    while(getline(&instruction,size,fbuild) != -1)
+                    while((read = getline(&instruction, &size, fbuild)) != -1)
                     {
                         isLabel = 0;
                         if (*instruction != '\n') 
                         {
                             if (!is_empty(instruction)) {
-                                instruction[strcspn(instruction, "\n")] = '\0';
+                                //Trim the string and remove the newline characters
                                 trim_string(instruction);
+                                instruction[strcspn(instruction, "\n")] = '\0';
 
-                                char* op = strtok(instruction, " ");
-                                op = toUppercase(op);
-                                //Check for whitespaces!
-                                if (op != NULL) {
-                                    int label_ = 1;
-                                    
-                                    //Instructions
-                                    for (int i = 0; i < sizeof(ops)/sizeof(ops[0]); i++) {
-                                        if (!strcmp(op,ops[i].OP_CODE)) {
-                                            op = strtok(NULL, " ");
-                                            ops[i].fn(assembly, op, &LineIndex);
+                                //Check if line is an op code
+                                if (isOPCode(instruction)) {
+                                    //Copy opcode string
+                                    char getOPCode[4];
+                                    memcpy(getOPCode, instruction, 4);
+                                    getOPCode[3] = '\0';
 
-                                            label_ = 0;
+                                    //Set string to uppercase (if lowercase)
+                                    toUppercase(getOPCode);
+
+                                    if (isValidOpcode(getOPCode)) {
+                                        char* instr_cp = (char*)malloc(read * sizeof(char));
+                                        memcpy(instr_cp, &instruction[3], read);
+
+                                        //Remove any leading whitespaces from the instruction argument
+                                        trim_string(instr_cp);
+
+                                        //If any arguments
+                                        if (strlen(instr_cp) != 0) {
+                                            for (int i = 0; i < sizeof(ops)/sizeof(ops[0]); i++) {
+                                                if (!strcmp(getOPCode, ops[i].OP_CODE)) {
+                                                    //Copy
+                                                    char* arg = instr_cp;
+                                                    //Must remove whitespaces
+                                                    arg = remove_spaces(arg);
+                                                    ops[i].fn(assembly, arg, &LineIndex);
+                                                }
+                                            }
                                         }
-                                    }
-
-                                    //Just need to get rid of new line character
-                                    op[strcspn(op,"\n")] = '\0';
-
-                                    //Singular instructions
-                                    for (int i = 0; i < sizeof(ops_singular)/sizeof(ops_singular[0]); i++) {
-                                        if (!strcmp(op, ops_singular[i].OP_CODE_SINGULAR)) {
-                                            assembly[LineIndex] = ops_singular[i].hex_val;
-                                            label_ = 0;
+                                        else {
+                                            //Singular instructions
+                                            for (int i = 0; i < sizeof(ops_singular)/sizeof(ops_singular[0]); i++) {
+                                                if (!strcmp(getOPCode, ops_singular[i].OP_CODE_SINGULAR)) {
+                                                    assembly[LineIndex] = ops_singular[i].hex_val;
+                                                }
+                                            }
                                         }
-                                    }
-
-                                    if (label_) {
-                                        //Labels
-                                        op = strtok(op, ":");
-
-                                        //Add the labels to the list then increment index
-                                        lblList[lblList->size].lineNumber = LineIndex;
-                                        lblList[lblList->size].name = (char*)malloc(sizeof(char)*strlen(op)+1);
-                                        strncpy(lblList[lblList->size].name,op,strlen(op));
-                                        
-                                        //Print memory location of the label (incremented by program counter)
-                                        printf("%s: %04x\n", lblList[lblList->size].name, regs.PC + lblList[lblList->size].lineNumber);
-
-                                        lblList->size++;
-
-                                        //Is a label
-                                        isLabel = 1;
-                                    }
-
-                                    if (!isLabel)
+                                        free(instr_cp);
+                                        //Must be incremented for each byte
                                         LineIndex++;
+                                    }
+                                    else
+                                        fprintf(stderr, "[-] 6502asm raised an error: Unrecognized opcode '%s'\n", getOPCode);
                                 }
+
+                                //Keeping this for later, might remove later
+                                #pragma region OLD IMPLEMENTATION
+                                // char* op = strtok(instruction, " ");
+                                // op = toUppercase(op);
+                                // //Check for whitespaces!
+                                // if (op != NULL) {
+                                //     int label_ = 1;
+                                    
+                                //     //Instructions
+                                //     for (int i = 0; i < sizeof(ops)/sizeof(ops[0]); i++) {
+                                //         if (!strcmp(op,ops[i].OP_CODE)) {
+                                //             op = strtok(NULL, " ");
+                                //             ops[i].fn(assembly, op, &LineIndex);
+
+                                //             label_ = 0;
+                                //         }
+                                //     }
+
+                                //     //Just need to get rid of new line character
+                                //     op[strcspn(op,"\n")] = '\0';
+
+                                //     //Singular instructions
+                                //     for (int i = 0; i < sizeof(ops_singular)/sizeof(ops_singular[0]); i++) {
+                                //         if (!strcmp(op, ops_singular[i].OP_CODE_SINGULAR)) {
+                                //             assembly[LineIndex] = ops_singular[i].hex_val;
+                                //             label_ = 0;
+                                //         }
+                                //     }
+
+                                //     if (label_) {
+                                //         //Labels
+                                //         op = strtok(op, ":");
+
+                                //         //Add the labels to the list then increment index
+                                //         lblList[lblList->size].lineNumber = LineIndex;
+                                //         lblList[lblList->size].name = (char*)malloc(sizeof(char)*strlen(op)+1);
+                                //         strncpy(lblList[lblList->size].name,op,strlen(op));
+                                        
+                                //         //Print memory location of the label (incremented by program counter)
+                                //         printf("%s: %04x\n", lblList[lblList->size].name, regs.PC + lblList[lblList->size].lineNumber);
+
+                                //         lblList->size++;
+
+                                //         //Is a label
+                                //         isLabel = 1;
+                                //     }
+
+                                //     if (!isLabel)
+                                //         LineIndex++;
+                                // }
+                                #pragma endregion
                             }
                         }
                     }
@@ -223,7 +273,7 @@ int main(int argc, char** argv) {
                     //pthread_exit(NULL);
 
                 } else
-                     fprintf(stderr, "[-] 6502asm ERROR: Error with finding file: %s\n", argv[2]);
+                     fprintf(stderr, "[-] 6502asm raised an error: Error with finding file: %s\n", argv[2]);
 
                 //== Memory deallocation ==
                 if (instruction)
@@ -284,14 +334,18 @@ void PrintMemory(uint8_t* mems)
     printf("%c",'\n');
 }
 
-//Just to fix one word opcodes
+//Must remove whitespaces
 char* remove_spaces(char* s) {
-    char* d = s;
-    do {
-        while (*d == '\n') {
-            ++d;
-        }
-    } while (*s++ = *d++);
+    //Keep index of nonspace chars
+    int nonspace = 0;
+ 
+    //Traverse and implement if not space
+    for (int i = 0; s[i] != '\0'; i++) {
+        if (s[i] != ' ')
+            s[nonspace++] = s[i];    
+    }
+    //Null byte terminate
+    s[nonspace] = '\0';
     return s;
 }
 

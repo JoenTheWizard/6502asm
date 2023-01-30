@@ -32,6 +32,6 @@ COOL:
     LDA $0201
     STA $0204
 
-    LDA $0008,Y
+    LDA $0008, Y
     LDY $0610
     NOP
