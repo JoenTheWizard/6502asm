@@ -31,22 +31,54 @@ static Tokens keywords[] = {
 
 //Argument tokenizing
 void tokenize_args(char* arg, Token_List* list) {
-    while (*arg != '\0') {
-        printf("%c", *arg);
-        if (*arg == '#') {
+    int a = 0;
+    for (int i = 0; arg[i] != '\0'; i++) {
+        printf("%c", arg[i]);
+        if (isalpha(arg[i]) || isdigit(arg[i])) {
+            int ind = 0;
+        }
+        else if (arg[i] == '#') {
             Tokens hashtag = {HASHTAG_, "#"};
             add_tok_l(list, hashtag);
+            a++;
         }
-        else if (*arg == '%') {
+        else if (arg[i] == '%') {
             Tokens percent = {PERCENT_, "%"};
             add_tok_l(list, percent);
+            a++;
         }
-        else if (*arg == '$') {
+        else if (arg[i] == '$') {
             Tokens dollar = {DOLLARSIGN_, "$"};
             add_tok_l(list, dollar);
+            a++;
         }
-        *arg++;
+        else if (arg[i] == '(') {
+            Tokens opbracket = {OPENBRACKET_, "("};
+            add_tok_l(list, opbracket);
+        }
+        else if (arg[i] == ')') {
+            Tokens closebracket = {CLOSEBRACKET_, ")"};
+            add_tok_l(list, closebracket);
+        }
     }
+
+    //If by any chance there too many '#', '$' or '%' symbols then stop
+    if (a > 2)
+        fprintf(stderr, "[-] 6502asm raised an error. Too many definitions at '%s'\n", arg);
+
+    //Possible token combinations from what I know ('#', '#$', '%', '$', '#%')
+    #pragma region
+    printf(" || ");
+    Token_Node* cur = list->head;
+
+    while (cur != NULL) {
+        printf("%s", cur->data.value);
+        cur = cur->next;
+    }
+    #pragma endregion
+
+    arg += a;
+    printf(" || %s", arg);
 }
 
 //Need to tokenize the file and return tokenized list

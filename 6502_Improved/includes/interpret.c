@@ -60,23 +60,16 @@ void InterpretFile(char* filePath) {
                         //printf("%d %d %s %s\n", LineNumber, strlen(instr_cp), getOPCode, instr_cp);
                         
                         //If argument is not label but uses these characters
-                        if (*instr_cp == '$' || *instr_cp == '#' || *instr_cp == '%') {
-                            //Check what mode the argument is
+                        if (*instr_cp == '$' || *instr_cp == '#' || *instr_cp == '%' || *instr_cp == '(') {
+                            //Initialize the list
                             Token_List* list = initList();
-                            tokenize_args(instr_cp, list);
 
-                            #pragma region
-                            // printf("  ||   ");
-                            // Token_Node* cur = list->head;
-        
-                            // while (cur != NULL) {
-                            //     printf("%s ", cur->data.value);
-                            //     cur = cur->next;
-                            // }
-                            #pragma endregion
+                            //Check what mode the argument is
+                            tokenize_args(instr_cp, list);
 
                             printf("\n");
 
+                            //Deallocate the list
                             free_tok_l(list);
                         }
                     }
@@ -87,7 +80,6 @@ void InterpretFile(char* filePath) {
                 //Otherwise error
                 else {
                     fprintf(stderr, "[-] 6502asm raised an error at line %d. Unrecognized opcode '%s'\n", LineNumber, getOPCode);
-                    break;
                 }
             }
         }
@@ -129,6 +121,7 @@ int isValidOpcode(char* opcode) {
     return 0;
 }
 
+#pragma region STRING MANIPULATION
 //Check for empty strings
 int isEmpty(const char *s) {
   while (*s != '\0') {
@@ -162,3 +155,4 @@ void trim_string(char* str) {
         str[j] = '\0';
     }
 }
+#pragma endregion
