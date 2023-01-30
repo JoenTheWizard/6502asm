@@ -74,7 +74,7 @@ typedef struct {
 void tokenize_file(char* path);
 
 //Tokenizing the arguments interperting from opcode
-void tokenize_args(char* arg);
+void tokenize_args(char* arg, Token_List* list);
 
 //=== Tokens list methods ===
 

@@ -58,10 +58,26 @@ void InterpretFile(char* filePath) {
                     //Must check for empty argument for argument parsing
                     if (strlen(instr_cp) != 0) {
                         //printf("%d %d %s %s\n", LineNumber, strlen(instr_cp), getOPCode, instr_cp);
+                        
                         //If argument is not label but uses these characters
                         if (*instr_cp == '$' || *instr_cp == '#' || *instr_cp == '%') {
                             //Check what mode the argument is
-                            tokenize_args(instr_cp);
+                            Token_List* list = initList();
+                            tokenize_args(instr_cp, list);
+
+                            #pragma region
+                            // printf("  ||   ");
+                            // Token_Node* cur = list->head;
+        
+                            // while (cur != NULL) {
+                            //     printf("%s ", cur->data.value);
+                            //     cur = cur->next;
+                            // }
+                            #pragma endregion
+
+                            printf("\n");
+
+                            free_tok_l(list);
                         }
                     }
 

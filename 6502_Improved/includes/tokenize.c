@@ -30,12 +30,23 @@ static Tokens keywords[] = {
 };
 
 //Argument tokenizing
-void tokenize_args(char* arg) {
+void tokenize_args(char* arg, Token_List* list) {
     while (*arg != '\0') {
         printf("%c", *arg);
+        if (*arg == '#') {
+            Tokens hashtag = {HASHTAG_, "#"};
+            add_tok_l(list, hashtag);
+        }
+        else if (*arg == '%') {
+            Tokens percent = {PERCENT_, "%"};
+            add_tok_l(list, percent);
+        }
+        else if (*arg == '$') {
+            Tokens dollar = {DOLLARSIGN_, "$"};
+            add_tok_l(list, dollar);
+        }
         *arg++;
     }
-    printf("\n");
 }
 
 //Need to tokenize the file and return tokenized list
