@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
         if (!strcmp(argv[1],"--test")) {
             printf("This is just used for debugging.\n");
 
-            InterpretFile("test.asm");
+            InterpretFile("test1.asm");
             //tokenize_file("test.asm");
         }
         else if (argc >= 3) {
@@ -140,6 +140,9 @@ int main(int argc, char** argv) {
                         if (*instruction != '\n') 
                         {
                             if (!is_empty(instruction)) {
+                                instruction[strcspn(instruction, "\n")] = '\0';
+                                trim_string(instruction);
+
                                 char* op = strtok(instruction, " ");
                                 op = toUppercase(op);
                                 //Check for whitespaces!
@@ -220,7 +223,7 @@ int main(int argc, char** argv) {
                     //pthread_exit(NULL);
 
                 } else
-                     printf("ERROR: Error with finding file: %s\n", argv[2]);
+                     fprintf(stderr, "[-] 6502asm ERROR: Error with finding file: %s\n", argv[2]);
 
                 //== Memory deallocation ==
                 if (instruction)
