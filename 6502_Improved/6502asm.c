@@ -19,7 +19,7 @@ void PrintMemory(uint8_t* mems);
 
 #pragma region STRING
 //String manipulation
-char* remove_spaces(char* s);
+void remove_spaces(char* s);
 char* toUppercase(char* s);
 int is_empty(const char* s);
 #pragma endregion
@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
                                                     //Copy
                                                     char* arg = instr_cp;
                                                     //Must remove whitespaces
-                                                    arg = remove_spaces(arg);
+                                                    remove_spaces(arg);
                                                     ops[i].fn(assembly, arg, &LineIndex);
                                                 }
                                             }
@@ -335,7 +335,7 @@ void PrintMemory(uint8_t* mems)
 }
 
 //Must remove whitespaces
-char* remove_spaces(char* s) {
+void remove_spaces(char* s) {
     //Keep index of nonspace chars
     int nonspace = 0;
  
@@ -346,7 +346,6 @@ char* remove_spaces(char* s) {
     }
     //Null byte terminate
     s[nonspace] = '\0';
-    return s;
 }
 
 int is_empty(const char *s) {

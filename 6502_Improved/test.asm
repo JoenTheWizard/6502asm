@@ -23,9 +23,9 @@ START:
     STA $0202
 COOL:
     INY
-    STX $10,Y
-    DEC $0001,X
-    ADC $01,X
+    STX $10, Y
+    DEC $0001, X
+    ADC $01, X
     ASL A
     STA $0203
 
