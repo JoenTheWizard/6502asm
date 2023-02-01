@@ -120,7 +120,7 @@ int main(int argc, char** argv) {
             if (strcmp(argv[1],"--read") == 0) {
                 PrintFile(argv[2],1);
             }
-            if (!strcmp(argv[1],"--build")){
+            if (!strcmp(argv[1],"--build") || !strcmp(argv[1],"-b")){
                 //File allocate
                 FILE* fbuild;
                 char* instruction = malloc(1024*sizeof(char));
