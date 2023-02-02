@@ -1,7 +1,7 @@
 #include "interpret.h"
 
 //Store the instructions to read line by line
-char* lineInstructions;
+char* instruction;
 
 //Store each line number
 int LineNumber;
@@ -9,89 +9,189 @@ int LineNumber;
 //Store byte index
 int byteIndex;
 
-//Simple interpretation of 6502 assembly language
-void InterpretFile(char* filePath) {
-    //Read the file and other init
+//Monitor memory management
+uint8_t* monitorMem;
+
+//Assembly hexdump
+uint8_t assembly[ASM_MEMORY];
+
+//List of labels
+LABELS* lblList;
+
+void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
+    //File allocate and read
     FILE* fbuild;
-    lineInstructions = NULL;
-    size_t len = 0;
+    instruction = NULL;
+    size_t size;
     ssize_t read;
 
-    //Line Number init
+    //Once we try and build, init the monitor memory
+    monitorMem = (uint8_t*)malloc(sizeof(uint8_t) * ROM);
+
+    //Start at line number 1
     LineNumber = 1;
 
-    //Read file at path
-    fbuild = fopen(filePath, "r");
-    //If unable to read file
-    if (fbuild == NULL) {
-        fprintf(stderr, "[-] 6502asm is unable to read file '%s'", filePath);
-        exit(EXIT_FAILURE);
-    }
-    
-    //Read each line by line
-    while ((read = getline(&lineInstructions, &len, fbuild)) != -1) {
-        //Make sure it's not empty
-        if (!isEmpty(lineInstructions)) {
-            //Must trim the leading whitespace from string
-            trim_string(lineInstructions);
+    //Init at byte index 0
+    byteIndex = 0;
 
-            //Remove new line characters
-            lineInstructions[strcspn(lineInstructions, "\n")] = '\0';
+    //Allocate for labels
+    lblList = (LABELS*)malloc(sizeof(LABELS) * LBL_LENGTH);
+    assert(lblList != NULL);
 
-            //Obtain the Instruction opcode
-            //If line is an operational instruction
-            if (isOPCode(lineInstructions)) {
-                //Get the op code string later for parsing
-                char getOPCode[4];
-                memcpy(getOPCode, lineInstructions, 4);
-                getOPCode[3] = '\0';
+    lblList->size = 0;
 
-                //Is the Opcode we're passing valid?
-                if (isValidOpcode(getOPCode)) {
-                    //Obtain arguments by padding out the opcode string
-                    char* instr_cp = (char*)malloc(read * sizeof(char));
-                    memcpy(instr_cp, &lineInstructions[3], read);
+    if (fbuild = fopen(filePath, "r")) {
+        while((read = getline(&instruction, &size, fbuild)) != -1) {
+            if (!isEmpty(instruction)) {
+                //Trim the string and remove the newline characters
+                trim_string(instruction);
+                instruction[strcspn(instruction, "\n")] = '\0';
 
-                    //Remove any leading whitespaces from the instruction argument
-                    trim_string(instr_cp);
+                //Check if line is an op code
+                if (isOPCode(instruction)) {
+                    //Copy opcode string
+                    char getOPCode[4];
+                    memcpy(getOPCode, instruction, 4);
+                    getOPCode[3] = '\0';
 
-                    //Must check for empty argument for argument parsing
-                    if (strlen(instr_cp) != 0) {
-                        //printf("%d %d %s %s\n", LineNumber, strlen(instr_cp), getOPCode, instr_cp);
-                        
-                        //If argument is not label but uses these characters
-                        if (*instr_cp == '$' || *instr_cp == '#' || *instr_cp == '%' || *instr_cp == '(') {
-                            //Initialize the list
-                            Token_List* list = initList();
+                    //Set string to uppercase (if lowercase)
+                    toUppercase(getOPCode);
 
-                            //Check what mode the argument is
-                            tokenize_args(instr_cp, list);
+                    if (isValidOpcode(getOPCode)) {
+                        char* instr_cp = (char*)malloc(read * sizeof(char));
+                        memcpy(instr_cp, &instruction[3], read);
 
-                            printf("\n");
+                        //Remove any leading whitespaces from the instruction argument
+                        trim_string(instr_cp);
 
-                            //Deallocate the list
-                            free_tok_l(list);
+                        //If any arguments
+                        if (strlen(instr_cp) != 0) {
+                            for (int i = 0; i < sizeof(ops)/sizeof(ops[0]); i++) {
+                                if (!strcmp(getOPCode, ops[i].OP_CODE)) {
+                                    //Copy
+                                    char* arg = instr_cp;
+                                    //Must remove whitespaces
+                                    remove_spaces(arg);
+                                    ops[i].fn(assembly, arg, &byteIndex);
+                                }
+                            }
                         }
+                        else {
+                            //Singular instructions
+                            for (int i = 0; i < sizeof(ops_singular)/sizeof(ops_singular[0]); i++) {
+                                if (!strcmp(getOPCode, ops_singular[i].OP_CODE_SINGULAR)) {
+                                    assembly[byteIndex] = ops_singular[i].hex_val;
+                                }
+                            }
+                        }
+                        free(instr_cp);
+                        //Must be incremented for each byte
+                        byteIndex++;
                     }
+                    else
+                        fprintf(stderr, "[-] 6502asm raised an error: Unrecognized opcode '%s' at line %i\n", getOPCode, LineNumber);
+                }
 
-                    //Deallocate
-                    free(instr_cp);
-                }
-                //Otherwise error
-                else {
-                    fprintf(stderr, "[-] 6502asm raised an error at line %d. Unrecognized opcode '%s'\n", LineNumber, getOPCode);
-                }
+                //Keeping this for later, might remove later
+                #pragma region OLD IMPLEMENTATION
+                // char* op = strtok(instruction, " ");
+                // op = toUppercase(op);
+                // //Check for whitespaces!
+                // if (op != NULL) {
+                //     int label_ = 1;
+                    
+                //     //Instructions
+                //     for (int i = 0; i < sizeof(ops)/sizeof(ops[0]); i++) {
+                //         if (!strcmp(op,ops[i].OP_CODE)) {
+                //             op = strtok(NULL, " ");
+                //             ops[i].fn(assembly, op, &LineIndex);
+
+                //             label_ = 0;
+                //         }
+                //     }
+
+                //     //Just need to get rid of new line character
+                //     op[strcspn(op,"\n")] = '\0';
+
+                //     //Singular instructions
+                //     for (int i = 0; i < sizeof(ops_singular)/sizeof(ops_singular[0]); i++) {
+                //         if (!strcmp(op, ops_singular[i].OP_CODE_SINGULAR)) {
+                //             assembly[LineIndex] = ops_singular[i].hex_val;
+                //             label_ = 0;
+                //         }
+                //     }
+
+                //     if (label_) {
+                //         //Labels
+                //         op = strtok(op, ":");
+
+                //         //Add the labels to the list then increment index
+                //         lblList[lblList->size].lineNumber = LineIndex;
+                //         lblList[lblList->size].name = (char*)malloc(sizeof(char)*strlen(op)+1);
+                //         strncpy(lblList[lblList->size].name,op,strlen(op));
+                        
+                //         //Print memory location of the label (incremented by program counter)
+                //         printf("%s: %04x\n", lblList[lblList->size].name, regs.PC + lblList[lblList->size].lineNumber);
+
+                //         lblList->size++;
+
+                //         //Is a label
+                //         isLabel = 1;
+                //     }
+
+                //     if (!isLabel)
+                //         LineIndex++;
+                // }
+                #pragma endregion
             }
+            //Increment line number
+            LineNumber++;
         }
-        //Increment for each line
-        LineNumber++;
-    }
 
-    //Deallocation
-    fclose(fbuild);
-    if (lineInstructions)
-        free(lineInstructions);
-    exit(EXIT_SUCCESS);
+        //Handle signal interrupts
+        signal(SIGINT, (void(*)())wrapup);
+
+        //ASSEMBLE
+        ASM(byteIndex, assembly, regs, monitorMem);
+
+        //Monitor memory (Zero page)
+        printf("ZERO PAGE\n");
+
+        //Print the memory
+        PrintMemory(monitorMem);
+
+        //SDL menu
+        //Graphics output
+        if (isVisual) {
+            // pthread_t thread_id;
+            // pthread_create(&thread_id, NULL, (void*)OpenGUI, monitorMem);
+            // pthread_join(thread_id, NULL);
+            OpenGUI(monitorMem);
+        }
+
+        //Read the registers
+        ReadRegs(regs);
+        //Close and deallocate file
+        fclose(fbuild);
+
+    } else
+        fprintf(stderr, "[-] 6502asm raised an error: Error with finding file: %s\n", filePath);
+
+    //== Memory deallocation ==
+    if (instruction)
+        free(instruction);
+
+    //Free the monitor memory
+    free(monitorMem);
+    //Free the labels list
+    FreeLBLBuffers(lblList, lblList->size);
+    free(lblList);
+}
+
+//Free the name buffers
+void FreeLBLBuffers(LABELS* LBL_LIST, int length) {
+    for (int i = 0; i < length; i++)
+        free(LBL_LIST[i].name);
 }
 
 //Return the opcode (without strtok usage)
@@ -104,9 +204,6 @@ int isOPCode(char* lineInstr) {
         i++;
     }
     //Check if an opcode
-    //printf(i == 3 ? " AN OPCODE" : " NOT AN OPCODE");
-    //printf("\n");
-
     return i == 3 ? 1 : 0;
 }
 
@@ -121,38 +218,31 @@ int isValidOpcode(char* opcode) {
     return 0;
 }
 
-#pragma region STRING MANIPULATION
-//Check for empty strings
-int isEmpty(const char *s) {
-  while (*s != '\0') {
-    if (!isspace((unsigned char)*s))
-      return 0;
-    s++;
-  }
-  return 1;
+//Read the register vals
+void ReadRegs(REGISTER* regs) {
+    printf("A: %X\nX: %X\nY: %X\nSTCKPTR: %X\nPROG COUNT: 0x%04X\nSTATUS: %X\n\n",
+        regs->A, regs->X, regs->Y, regs->StackPt, regs->PC, regs->Status);
 }
 
-//To trim the leading string (dealing with heap buffers, so cannot increment pointers)
-void trim_string(char* str) {
-    if (str == NULL)
-        exit(EXIT_FAILURE);
-
-    //Get the index to pad off
-    int i = 0;
-    while (str[i] == ' ' || str[i] == '\t')
-        i++;
-    
-    //Shift all to the left
-    int j = 0;
-    if (i != 0) {
-        //Set the position from the pad
-        while (str[i + j] != '\0') {
-            str[j] = str[j + i];
-            j++;
-        }
-        
-        //Null terminate
-        str[j] = '\0';
+//Print memory
+void PrintMemory(uint8_t* mems) {
+    uint16_t adr = 0x0000;
+    printf("%04x: %02x ", adr, mems[0]);
+    for (int i = 1; i < ROM; i++) {
+        if (i%16==15)
+            printf("%02x\n%04x: ", mems[i], adr+=16);
+        else
+            printf("%02x ", mems[i]);
     }
+    printf("%c",'\n');
 }
-#pragma endregion
+
+//SIGINT deallocation.
+//Not all of the heap buffers are deallocated but I'll fix that later
+static void wrapup(void) {
+    free(monitorMem);
+    //Free the labels list
+    FreeLBLBuffers(lblList, lblList->size);
+    free(lblList);
+    exit(0);
+}

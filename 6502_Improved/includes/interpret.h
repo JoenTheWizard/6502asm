@@ -1,12 +1,18 @@
 #ifndef INTERPRET_H
 #define INTERPRET_H
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
+#include <signal.h>
+#include <assert.h>
+#include "translate.h"
 #include "tokenize.h"
+#include "gui.h"
+#include "defines.h"
+#include "register.h"
+#include "assemble.h"
+#include "string_manipulation.h"
 
-//Fixing the 6502 assembly interpret (as the current implementation is ugly and not efficient)
+//MAIN 6502 ASSEMBLER INTERPRETATION IS HERE
+//Fixing the 6502 assembly interpret (as the current implementation is ugly and inefficient)
 //Still being worked on and will use the tokenization.h as well which is also being worked on
 
 //For this we need some reserverd keywords to interpret
@@ -29,19 +35,66 @@ static struct {
     {0, "CLD"}, {0, "CLI"},
 };
 
-//Interpreter. To interpret the file which will then be passed to translator for each instruction
-void InterpretFile(char* filePath);
+typedef struct {
+    char* name;
+    int lineNumber;
+    int size;
+} LABELS;
 
-//String functions to check for empty strings and etc.
-int isEmpty(const char *s);
+// ===========================================
+//READ ASSEMBLY LANGUAGE (Not all opcodes are implemented)
+static struct {
+    char* OP_CODE;
+    void (*fn)(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd);
+} ops[] = {
+    {"LDA", &LDA}, {"LDX", &LDX}, {"LDY", &LDY},
+    {"STA", &STA}, {"STX", &STX}, {"STY", &STY},
+    {"ADC", &ADC}, {"INC", &INC}, {"DEC", &DEC},
+    {"ASL", &ASL}, {"AND", &AND}, {"CMP", &CMP}, 
+    {"CPX", &CPX}, {"CPY", &CPY}, {"JMP", &JMP},
+    {"ROL", &ROL},
+};
 
-//Trim leading whitespace
-void trim_string(char* str);
+//Im very fucking lazy so I stored 1 byte op-codes into a seperate array to store it's hex op-code
+//rather than storing a function pointer like the 2-3 byte op-code counter-part
+static struct {
+    char* OP_CODE_SINGULAR;
+    uint8_t hex_val;
+} ops_singular[] = {
+    {"INX",0xE8}, {"INY",0xC8},
+    {"DEX",0xCA}, {"DEY",0x88},
+    {"TAX",0xAA}, {"TXA",0x8A},
+    {"TAY",0xA8}, {"TYA",0x98},
+    {"TXS",0x9A}, {"TSX",0xBA},
+    {"PHA",0x48}, {"PLA",0x68},
+    {"NOP",0xEA}, {"SEC",0x38},
+    {"SED",0xF8}, {"SEI",0x78},
+    {"CLC",0x18}, {"CLD",0xD8},
+    {"CLI",0x58},
+};
+// ===========================================
+
+//Interpreter 6502 asm (moved here)
+void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual);
 
 //Get the OPcode
 int isOPCode(char* lineInstr);
 
 //Is an existing Opocode
 int isValidOpcode(char* opcode);
+
+//Signal
+static void wrapup(void);
+
+//Debugging stuff
+
+//Print memory
+void PrintMemory(uint8_t* mems);
+
+//Read register
+void ReadRegs(REGISTER* regs);
+
+//Free label buffes (will be replaced soon)
+void FreeLBLBuffers(LABELS* LBL_LIST, int length);
 
 #endif

@@ -13,5 +13,8 @@
 //Define console clear ANSI escape codes
 #define CNSCLR() printf("\033[H\033[J")
 
+//Label length
+#define LBL_LENGTH 64
+
 //Break function
 //#define BREAK
