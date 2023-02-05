@@ -12,8 +12,8 @@ void ASM(int Line, uint8_t memory[ASM_MEMORY], REGISTER* reg, uint8_t* monitorMe
         printf("%02x ",memory[i]);
     
     //ALLOCATE ROM
-    for (int i = 0x0600; i < 0x0600 + Line; i++)
-        monitorMem[i] = memory[i - 0x0600];
+    for (int i = reg->PC; i < reg->PC + Line; i++)
+        monitorMem[i] = memory[i - reg->PC];
 
     printf("\n======== ASSEMBLING %i BYTES =======\n", Line);
     while (reg->PC < ROM) {

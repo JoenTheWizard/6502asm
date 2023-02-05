@@ -66,6 +66,8 @@ void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
 
                         //If any arguments
                         if (strlen(instr_cp) != 0) {
+                            //By iterating within the loop we need to know if the opcode is supposed to be sigular
+                            int isSingular = 0;
                             for (int i = 0; i < sizeof(ops)/sizeof(ops[0]); i++) {
                                 if (!strcmp(getOPCode, ops[i].OP_CODE)) {
                                     //Copy
@@ -73,14 +75,23 @@ void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
                                     //Must remove whitespaces
                                     remove_spaces(arg);
                                     ops[i].fn(assembly, arg, &byteIndex);
+
+                                    //Argument is valid for the parsed opcode
+                                    isSingular = 1;
+                                    break;
                                 }
                             }
+                            //If its a supposed singular argument raise an error
+                            if (!isSingular)
+                                fprintf(stderr, "[-] 6502asm raised an error. The singular byte opcode '%s' at line %d requires no arguments.\n",
+                                        getOPCode, LineNumber);
                         }
                         else {
                             //Singular instructions
                             for (int i = 0; i < sizeof(ops_singular)/sizeof(ops_singular[0]); i++) {
                                 if (!strcmp(getOPCode, ops_singular[i].OP_CODE_SINGULAR)) {
                                     assembly[byteIndex] = ops_singular[i].hex_val;
+                                    break;
                                 }
                             }
                         }
@@ -184,13 +195,13 @@ void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
     //Free the monitor memory
     free(monitorMem);
     //Free the labels list
-    FreeLBLBuffers(lblList, lblList->size);
+    FreeLBLBuffers(lblList);
     free(lblList);
 }
 
 //Free the name buffers
-void FreeLBLBuffers(LABELS* LBL_LIST, int length) {
-    for (int i = 0; i < length; i++)
+void FreeLBLBuffers(LABELS* LBL_LIST) {
+    for (int i = 0; i < LBL_LIST->size; i++)
         free(LBL_LIST[i].name);
 }
 
@@ -242,7 +253,7 @@ void PrintMemory(uint8_t* mems) {
 static void wrapup(void) {
     free(monitorMem);
     //Free the labels list
-    FreeLBLBuffers(lblList, lblList->size);
+    FreeLBLBuffers(lblList);
     free(lblList);
     exit(0);
 }

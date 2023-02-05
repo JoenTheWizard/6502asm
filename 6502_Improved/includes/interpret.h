@@ -95,6 +95,6 @@ void PrintMemory(uint8_t* mems);
 void ReadRegs(REGISTER* regs);
 
 //Free label buffes (will be replaced soon)
-void FreeLBLBuffers(LABELS* LBL_LIST, int length);
+void FreeLBLBuffers(LABELS* LBL_LIST);
 
 #endif
