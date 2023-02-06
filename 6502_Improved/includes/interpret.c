@@ -81,19 +81,28 @@ void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
                                     break;
                                 }
                             }
-                            //If its a supposed singular argument raise an error
+                            //If its a supposed singular opcode raise an error
                             if (!isSingular)
                                 fprintf(stderr, "[-] 6502asm raised an error. The singular byte opcode '%s' at line %d requires no arguments.\n",
                                         getOPCode, LineNumber);
                         }
+                        //Singular instructions
                         else {
-                            //Singular instructions
+                            //Check if the opcode read requires arguments
+                            int isArgument = 0;
                             for (int i = 0; i < sizeof(ops_singular)/sizeof(ops_singular[0]); i++) {
                                 if (!strcmp(getOPCode, ops_singular[i].OP_CODE_SINGULAR)) {
                                     assembly[byteIndex] = ops_singular[i].hex_val;
+
+                                    //Opcode doesnt require argument
+                                    isArgument = 1;
                                     break;
                                 }
                             }
+                            //If its a supposed non-singular opcode (requires argument) raise an error
+                            if (!isArgument)
+                                fprintf(stderr, "[-] 6502asm raised an error. The opcode '%s' at line %d requires arguments to function.\n",
+                                        getOPCode, LineNumber);
                         }
                         free(instr_cp);
                         //Must be incremented for each byte
