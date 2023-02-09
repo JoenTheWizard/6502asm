@@ -1,5 +1,6 @@
 #include "translate.h"
 
+//This is an ugly but nicely works implementation
 //For translation of each instruction
 //This can be improved but will do that later
 //As for now 'tokenize.c/h' will contain simple tokenization for the assembly language
@@ -7,9 +8,17 @@
 
 //For strings and stuff
 char* CheckRegisterOffset(char* op) {
-    char* str = strtok(op,",");
-    str = strtok(NULL,",");
-    return str;
+    char *str1, *str2, *copy;
+    str1 = strtok(op, ",");
+    str2 = strtok(NULL, ",");
+    //If tokenize is not null
+    if (str2 != NULL) {
+        copy = (char*)malloc(strlen(str2) + 1);
+        strcpy(copy, str2);
+        return copy;
+    }
+    //If strtok returns null via delimiter return null
+    return NULL;
 }
 
 //Store 2 byte instruction (will increment ROM once)
@@ -68,6 +77,7 @@ void LDA(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store3byte_instr(0xAD, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
     //Indirect (both needs to implemented in assemble.h)
@@ -89,6 +99,7 @@ void LDA(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store2byte_instr(0xB1, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
 }
@@ -153,6 +164,7 @@ void STA(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store3byte_instr(0x8D, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
     //Indirect (both needs to implemented in assemble.h)
@@ -174,6 +186,7 @@ void STA(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store2byte_instr(0x91, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
 }
@@ -200,6 +213,7 @@ void STX(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store3byte_instr(0x8E, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
 
@@ -227,6 +241,7 @@ void STY(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store3byte_instr(0x8C, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
 }
@@ -265,6 +280,7 @@ void INC(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store3byte_instr(0xEE, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
 }
@@ -297,6 +313,7 @@ void DEC(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store3byte_instr(0xCE, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
 }
@@ -333,6 +350,7 @@ void ADC(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store3byte_instr(0x6D, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
     //Immediate 
@@ -361,6 +379,7 @@ void ADC(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store2byte_instr(0x71, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
 }
@@ -394,6 +413,7 @@ void ASL(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                         Store3byte_instr(0x0E, assemble, op, LineInd);
                     }
                 }
+                free(offSetReg);
             }
         }
     }
@@ -424,6 +444,7 @@ void AND(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                 else if (strlen(strtok(op,"\n")) <= 4)
                     Store3byte_instr(0x2D, assemble, op, LineInd);
             }
+            free(offSetReg);
         }
     }
     else if (*op == '#' && *op+1 == '$') {
@@ -450,6 +471,7 @@ void AND(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store2byte_instr(0x31, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
 }
@@ -479,6 +501,7 @@ void CMP(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                 else if (strlen(strtok(op,"\n")) <= 4)
                     Store3byte_instr(0xCD, assemble, op, LineInd);
             }
+            free(offSetReg);
         }
     }
     else if (*op == '#' && *op+1 == '$') {
@@ -505,6 +528,7 @@ void CMP(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                     Store2byte_instr(0xD1, assemble, op, LineInd);
                 }
             }
+            free(offSetReg);
         }
     }
 }
@@ -580,6 +604,7 @@ void ROL(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd) {
                         Store3byte_instr(0x2E, assemble, op, LineInd);
                     }
                 }
+                free(offSetReg);
             }
         }
     }
