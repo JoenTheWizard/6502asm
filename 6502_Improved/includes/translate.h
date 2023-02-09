@@ -1,6 +1,6 @@
 //For translation of each instruction
-#pragma once
-#include <assert.h>
+#ifndef TRANSLATE_H
+#define TRANSLATE_H
 #include "defines.h"
 //For strings and stuff
 char* CheckRegisterOffset(char* op);
@@ -63,3 +63,5 @@ void ROL(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd);
 
 //JMP
 void JMP(uint8_t assemble[ASM_MEMORY], char* op, int* LineInd);
+
+#endif

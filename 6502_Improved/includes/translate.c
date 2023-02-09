@@ -16,7 +16,7 @@ char* CheckRegisterOffset(char* op) {
     //If tokenize is not null
     if (str2 != NULL) {
         copy = (char*)malloc(strlen(str2) + 1);
-        assert(copy != NULL);
+        if (!copy) return NULL;
         strcpy(copy, str2);
         return copy;
     }
