@@ -3,11 +3,9 @@
 //Store the instructions to read line by line
 char* instruction;
 
-//Store each line number
-int LineNumber;
+int LineNumber, //Store each line number
+    byteIndex; //Store byte index
 
-//Store byte index
-int byteIndex;
 
 //Monitor memory management
 uint8_t* monitorMem;
@@ -57,6 +55,7 @@ void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
                     //Set string to uppercase (if lowercase)
                     toUppercase(getOPCode);
 
+                    //Is said opcode even 'valid'?
                     if (isValidOpcode(getOPCode)) {
                         char* instr_cp = (char*)malloc(read * sizeof(char));
                         memcpy(instr_cp, &instruction[3], read);

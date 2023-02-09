@@ -1,5 +1,6 @@
 //For translation of each instruction
 #pragma once
+#include <assert.h>
 #include "defines.h"
 //For strings and stuff
 char* CheckRegisterOffset(char* op);
