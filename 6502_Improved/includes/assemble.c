@@ -420,21 +420,13 @@ uint16_t Bit16Adr(REGISTER* r, uint8_t* mems) {
 }
 
 uint16_t _indirectX(REGISTER* r, uint8_t* mems) {
-    r->PC++;
-    uint8_t curMem = mems[r->PC] + r->X;
-    uint16_t adrADC = 0;
-    adrADC |= mems[curMem];
-    adrADC |= (mems[++curMem] << 8);
-    return adrADC;
+    uint16_t curMem = mems[++r->PC] + r->X;
+    return mems[curMem] | (mems[curMem + 1] << 8);
 }
 
 uint16_t _indirectY(REGISTER* r, uint8_t* mems) {
-    r->PC++;
-    uint8_t curMem = mems[r->PC];
-    uint16_t adr = 0;
-    adr |= mems[curMem];
-    adr |= (mems[++curMem] << 8);
-    //printf("==== %04x\n",adr + r->Y);
+    uint8_t curMem = mems[++r->PC];
+    uint16_t adr = (mems[curMem] | (mems[++curMem] << 8));
     return adr + r->Y;
 }
 
