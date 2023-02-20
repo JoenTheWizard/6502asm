@@ -5,6 +5,12 @@
 #include <stdint.h>
 #include <string.h>
 
+//Help menu
+#define HELP "Usage: 6502asm [options...]\n \
+-b, --build <assembly-file> [-v | --visual]  build, assemble and then run 6502 assembly file\n\n\
+6502asm is not yet complete and still has some plans to add more features such as\n\
+support for all opcodes.\n"
+
 #define ASM_MEMORY 4096
 
 //Init ROM

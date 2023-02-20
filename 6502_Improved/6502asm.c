@@ -35,6 +35,8 @@ int main(int argc, char** argv) {
     else {
         if (argc == 2 && strcmp(argv[1],"regs")==0)
             ReadRegs(&regs);
+        if (argc == 2 && !strcmp(argv[1],"--help"))
+            printf(HELP);
         if (!strcmp(argv[1],"--test")) {
             printf("This is just used for debugging.\n");
 
@@ -49,7 +51,7 @@ int main(int argc, char** argv) {
                 //Check for GUI mode
                 int gui = 0;
                 if (argc >= 4) {
-                    if (!strcmp(argv[3], "-v"))
+                    if (!strcmp(argv[3], "-v") || !strcmp(argv[3], "--visual"))
                         gui = 1;
                 }
                 //Interpret the 6502 assembly file
