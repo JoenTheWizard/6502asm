@@ -9,6 +9,7 @@
 #include "defines.h"
 #include "register.h"
 #include "assemble.h"
+#include "labels.h"
 #include "string_manipulation.h"
 
 //MAIN 6502 ASSEMBLER INTERPRETATION IS HERE
@@ -34,12 +35,6 @@ static struct {
     {0, "SED"}, {0, "SEI"}, {0, "CLC"},
     {0, "CLD"}, {0, "CLI"},
 };
-
-typedef struct {
-    char* name;
-    int lineNumber;
-    int size;
-} LABELS;
 
 // ===========================================
 //READ ASSEMBLY LANGUAGE (Not all opcodes are implemented)
@@ -93,8 +88,5 @@ void PrintMemory(uint8_t* mems);
 
 //Read register
 void ReadRegs(REGISTER* regs);
-
-//Free label buffes (will be replaced soon)
-void FreeLBLBuffers(LABELS* LBL_LIST);
 
 #endif

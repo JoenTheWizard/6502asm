@@ -14,7 +14,7 @@ uint8_t* monitorMem;
 uint8_t assembly[ASM_MEMORY];
 
 //List of labels
-LABELS* lblList;
+Labels_List* lblList;
 
 void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
     //File allocate and read
@@ -33,10 +33,7 @@ void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
     byteIndex = 0;
 
     //Allocate for labels
-    lblList = (LABELS*)malloc(sizeof(LABELS) * LBL_LENGTH);
-    assert(lblList != NULL);
-
-    lblList->size = 0;
+    lblList = initLblList();
 
     if (fbuild = fopen(filePath, "r")) {
         while((read = getline(&instruction, &size, fbuild)) != -1) {
@@ -203,14 +200,7 @@ void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
     //Free the monitor memory
     free(monitorMem);
     //Free the labels list
-    FreeLBLBuffers(lblList);
-    free(lblList);
-}
-
-//Free the name buffers
-void FreeLBLBuffers(LABELS* LBL_LIST) {
-    for (int i = 0; i < LBL_LIST->size; i++)
-        free(LBL_LIST[i].name);
+    free_lbl_l(lblList);
 }
 
 //Return the opcode (without strtok usage)
@@ -261,7 +251,6 @@ void PrintMemory(uint8_t* mems) {
 static void wrapup(void) {
     free(monitorMem);
     //Free the labels list
-    FreeLBLBuffers(lblList);
-    free(lblList);
+    free_lbl_l(lblList);
     exit(0);
 }

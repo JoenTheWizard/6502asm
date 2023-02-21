@@ -40,8 +40,26 @@ int main(int argc, char** argv) {
         if (!strcmp(argv[1],"--test")) {
             printf("This is just used for debugging.\n");
 
+            #pragma region
+            // Labels_List* list_test = initLblList();
+
+            // LABELS l = {
+            //     .name = "Balls",
+            //     .lineNumber = 10,
+            //     .addr = 0x04
+            // };
+            // add_lbl_l(list_test, &l);
+            // Labels_Node* cur = list_test->head;
+            // while (cur != NULL) {
+            //     printf("%s %d\n", cur->data.name, cur->data.lineNumber);
+            //     cur = cur->next;
+            // }
+            //free_lbl_l(list_test);
+
             //InterpretFile("test1.asm");
             //tokenize_file("test.asm");
+            #pragma endregion
+
         }
         else if (argc >= 3) {
             if (!strcmp(argv[1],"--read")) {
