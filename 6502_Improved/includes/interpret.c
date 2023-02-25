@@ -107,6 +107,28 @@ void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual) {
                     else
                         fprintf(stderr, "[-] 6502asm raised an error: Unrecognized opcode '%s' at line %i\n", getOPCode, LineNumber);
                 }
+                //If specified identifier is a label
+                else if (isLabel(instruction)) {
+                    //For label parsing there will need to be two passes
+                    //1. For reading the labels and where they are located
+                    //2. For allocating the labels when used
+
+                    //Remove last character, ':'
+                    instruction[strlen(instruction) - 1] = '\0';
+
+                    //Specify the labels struct
+                    LABELS lbl6502 = {
+                        .name = instruction, //Set and point name to instruction pointer
+                        .lineNumber = LineNumber, //Grab the line number
+                        .addr = byteIndex //Set the address of the label from current 'byte index'
+                    };
+
+                    //Append to label list
+                    add_lbl_l(lblList, &lbl6502);
+
+                    //Debug
+                    printf("FOUND LABEL: %s %d %04x\n", lbl6502.name, lbl6502.lineNumber, lbl6502.addr);
+                }
 
                 //Keeping this for later, might remove later
                 #pragma region OLD IMPLEMENTATION
@@ -214,6 +236,30 @@ int isOPCode(char* lineInstr) {
     }
     //Check if an opcode
     return i == 3 ? 1 : 0;
+}
+
+//Is input a label indentifier?
+int isLabel(char* lineInstr) {
+    //6502 asm labels use alphanumeric, '_', and '.' symbols. Some assemblers
+    //don't need to make it end with a colon but for the sake of this assembler
+    //it would require a colon for better maintainability. Also spaces are not allowed
+    int i = 0, hasColon = 0;
+
+    while (lineInstr[i] != '\0') {
+        //Labels can contain alnum, ., and _
+        if (isalnum(lineInstr[i]) || lineInstr[i] == '.' || lineInstr[i] == '_')
+            i++;
+        //Check if the label string ends with a ':'
+        else if (lineInstr[i] == ':' && i == strlen(lineInstr) - 1 && i > 0) {
+            hasColon = 1;
+            i++;
+        }
+        else
+            return 0;
+    }
+
+    //Must contain colon to pass a valid label
+    return hasColon;
 }
 
 //Check if the parsed "opcode" is valid

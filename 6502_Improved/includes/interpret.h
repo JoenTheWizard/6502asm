@@ -75,6 +75,9 @@ void Interpret6502asm(char* filePath, REGISTER* regs, int isVisual);
 //Get the OPcode
 int isOPCode(char* lineInstr);
 
+//Is a Label?
+int isLabel(char* lineInstr);
+
 //Is an existing Opocode
 int isValidOpcode(char* opcode);
 
